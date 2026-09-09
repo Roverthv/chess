@@ -55,4 +55,5 @@ public class ChessPiece {
         throw new RuntimeException("Not implemented");
         // create library of movements for each type and create checks for validity
     }
+
 }

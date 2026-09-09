@@ -42,4 +42,14 @@ public class ChessBoard {
     public void resetBoard() {
         throw new RuntimeException("Not implemented");
     }
+
+    public boolean isValidMove(ChessPosition target, ChessGame.TeamColor allegiance){
+        if (target.getRow() < 1 || target.getRow() > 8 || target.getColumn() < 1 ||target.getColumn() > 8){
+            return false;
+        }
+        if (getPiece(target).getTeamColor() == allegiance){
+            return false;
+        }
+        return true;
+    }
 }

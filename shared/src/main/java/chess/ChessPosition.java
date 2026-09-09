@@ -30,4 +30,10 @@ public class ChessPosition {
     public int getColumn() {
         return col;
     }
+
+    public ChessPosition addOffset(int rowOffset, int colOffset ){
+        int adjustedRow = this.row + rowOffset;
+        int adjustedCol = this.col + colOffset;
+        return new ChessPosition(adjustedRow, adjustedCol);
+    }
 }
