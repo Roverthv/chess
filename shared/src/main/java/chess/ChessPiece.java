@@ -66,7 +66,7 @@ public class ChessPiece {
             case PieceType.ROOK -> throw new RuntimeException("Not implemented"); 
             case PieceType.PAWN -> throw new RuntimeException("Not implemented");
             default -> throw new IllegalStateException("Unexpected value: " + type);
-        };
+        }
         for (int[] offset : offsets) {
             ChessPosition target = myPosition.addOffset(offset[0], offset[1]);
             if (board.isValidMove(target, this.getTeamColor())) {
