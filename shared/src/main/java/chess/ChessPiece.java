@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Represents a single chess piece
@@ -52,8 +54,26 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        //throw new RuntimeException("Not implemented");
         // create library of movements for each type and create checks for validity
+        List<ChessMove> moves = new ArrayList<>();
+        int[][] offsets;
+        switch(type) {
+            case PieceType.KING -> throw new RuntimeException("Not implemented"); 
+            case PieceType.QUEEN -> throw new RuntimeException("Not implemented"); 
+            case PieceType.BISHOP -> offsets = Bishop.getMoveData();
+            case PieceType.KNIGHT -> throw new RuntimeException("Not implemented"); 
+            case PieceType.ROOK -> throw new RuntimeException("Not implemented"); 
+            case PieceType.PAWN -> throw new RuntimeException("Not implemented");
+            default -> throw new IllegalStateException("Unexpected value: " + type);
+        };
+        for (int[] offset : offsets) {
+            ChessPosition target = myPosition.addOffset(offset[0], offset[1]);
+            if (board.isValidMove(target, this.getTeamColor())) {
+                moves.add(new ChessMove(myPosition, target, null));
+            }
+        }
+        return moves;
     }
 
 }

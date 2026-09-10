@@ -47,7 +47,7 @@ public class ChessBoard {
         if (target.getRow() < 1 || target.getRow() > 8 || target.getColumn() < 1 ||target.getColumn() > 8){
             return false;
         }
-        if (getPiece(target).getTeamColor() == allegiance){
+        if (getPiece(target)!= null && getPiece(target).getTeamColor() == allegiance){
             return false;
         }
         return true;
