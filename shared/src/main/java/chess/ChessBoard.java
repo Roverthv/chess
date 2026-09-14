@@ -43,13 +43,18 @@ public class ChessBoard {
         throw new RuntimeException("Not implemented");
     }
 
-    public boolean isValidMove(ChessPosition target, ChessGame.TeamColor allegiance){
+    public boolean[] isValidMove(ChessPosition target, ChessGame.TeamColor allegiance){
         if (target.getRow() < 1 || target.getRow() > 8 || target.getColumn() < 1 ||target.getColumn() > 8){
-            return false;
+            return new boolean[]{false, false};
         }
         if (getPiece(target)!= null && getPiece(target).getTeamColor() == allegiance){
-            return false;
+            return new boolean[]{false, false};
         }
-        return true;
+        if (getPiece(target)!= null && getPiece(target).getTeamColor() != allegiance){
+            return new boolean[]{true, true};
+        }
+        else{
+            return new boolean[]{true, false};
+        }
     }
 }

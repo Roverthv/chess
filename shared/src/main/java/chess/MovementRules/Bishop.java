@@ -21,8 +21,13 @@ public class Bishop implements PiecePatterns {
         for (int[][] pattern : movementPatterns) {
             for (int[] offset : pattern) {
                 ChessPosition target = myPosition.addOffset(offset[0], offset[1]);
-                if (board.isValidMove(target, pieceColor)) {
+                var valid = board.isValidMove(target, pieceColor);
+                if (valid[0] && !valid[1]) {
                     moves.add(new ChessMove(myPosition, target, null));
+                }
+                else if(valid[0] && valid[1]){
+                    moves.add(new ChessMove(myPosition, target, null));
+                    break;
                 }
                 else{
                     break;
