@@ -1,6 +1,7 @@
 package chess;
 
 import chess.MovementRules.Bishop;
+import chess.MovementRules.Queen;
 import chess.MovementRules.Rook;
 
 import java.util.Collection;
@@ -61,7 +62,7 @@ public class ChessPiece {
         List<ChessMove> moves;
         switch(type) {
             case PieceType.KING -> throw new RuntimeException("Not implemented");
-            case PieceType.QUEEN -> throw new RuntimeException("Not implemented");
+            case PieceType.QUEEN -> moves = Queen.findMoves(board, myPosition, pieceColor);
             case PieceType.BISHOP -> moves = Bishop.findMoves(board, myPosition, pieceColor);
             case PieceType.KNIGHT -> throw new RuntimeException("Not implemented");
             case PieceType.ROOK -> moves = Rook.findMoves(board, myPosition, pieceColor);
