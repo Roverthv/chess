@@ -36,4 +36,22 @@ public class ChessPosition {
         int adjustedCol = this.col + colOffset;
         return new ChessPosition(adjustedRow, adjustedCol);
     }
+
+    @Override
+    public boolean equals(Object p){
+        if (this == p) {return true;}
+        if (p == null || getClass() != p.getClass()) {return false;}
+        ChessPosition pos = (ChessPosition) p;
+        return (row == pos.getRow() && col == pos.getColumn());
+    }
+
+    @Override
+    public int hashCode(){
+        return (67 * row) + (83*col);
+    }
+
+    @Override
+    public String toString(){
+        return String.format("%d,%d", row, col);
+    }
 }
