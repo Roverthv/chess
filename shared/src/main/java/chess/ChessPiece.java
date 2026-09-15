@@ -1,6 +1,7 @@
 package chess;
 
 import chess.MovementRules.Bishop;
+import chess.MovementRules.Knight;
 import chess.MovementRules.Queen;
 import chess.MovementRules.Rook;
 
@@ -64,7 +65,7 @@ public class ChessPiece {
             case PieceType.KING -> throw new RuntimeException("Not implemented");
             case PieceType.QUEEN -> moves = Queen.findMoves(board, myPosition, pieceColor);
             case PieceType.BISHOP -> moves = Bishop.findMoves(board, myPosition, pieceColor);
-            case PieceType.KNIGHT -> throw new RuntimeException("Not implemented");
+            case PieceType.KNIGHT -> moves = Knight.findMoves(board, myPosition, pieceColor);
             case PieceType.ROOK -> moves = Rook.findMoves(board, myPosition, pieceColor);
             case PieceType.PAWN -> throw new RuntimeException("Not implemented");
             default -> throw new IllegalStateException("Unexpected value: " + type);
