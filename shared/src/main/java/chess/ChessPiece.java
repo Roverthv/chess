@@ -49,6 +49,8 @@ public class ChessPiece {
         return type;
     }
 
+    public boolean getHasMoved(){ return hasMoved;}
+
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -59,7 +61,7 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         //throw new RuntimeException("Not implemented");
         // create library of movements for each type and create checks for validity
-        List<ChessMove> moves = MoveRules.determineMoves(board, myPosition, type, pieceColor, hasMoved);
+        List<ChessMove> moves = MoveRules.determineMoves(board, myPosition, getPieceType(), getTeamColor(), getHasMoved());
         hasMoved = true;
         return moves;
     }
