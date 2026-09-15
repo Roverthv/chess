@@ -15,10 +15,12 @@ public class ChessPiece {
 
     private final ChessGame.TeamColor pieceColor;
     private final PieceType type;
+    private Boolean hasMoved;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
+        hasMoved = false;
     }
 
     /**
@@ -64,10 +66,10 @@ public class ChessPiece {
             case PieceType.BISHOP -> moves = Bishop.findMoves(board, myPosition, pieceColor);
             case PieceType.KNIGHT -> moves = Knight.findMoves(board, myPosition, pieceColor);
             case PieceType.ROOK -> moves = Rook.findMoves(board, myPosition, pieceColor);
-            case PieceType.PAWN -> throw new RuntimeException("Not implemented");
+            case PieceType.PAWN -> moves = Pawn.findMoves(board,myPosition,pieceColor, hasMoved);
             default -> throw new IllegalStateException("Unexpected value: " + type);
         }
-
+        hasMoved = true;
         return moves;
     }
 
