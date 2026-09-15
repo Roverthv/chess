@@ -1,9 +1,6 @@
 package chess;
 
-import chess.MovementRules.Bishop;
-import chess.MovementRules.Knight;
-import chess.MovementRules.Queen;
-import chess.MovementRules.Rook;
+import chess.MovementRules.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -62,7 +59,7 @@ public class ChessPiece {
         // create library of movements for each type and create checks for validity
         List<ChessMove> moves;
         switch(type) {
-            case PieceType.KING -> throw new RuntimeException("Not implemented");
+            case PieceType.KING -> moves = King.findMoves(board, myPosition, pieceColor);
             case PieceType.QUEEN -> moves = Queen.findMoves(board, myPosition, pieceColor);
             case PieceType.BISHOP -> moves = Bishop.findMoves(board, myPosition, pieceColor);
             case PieceType.KNIGHT -> moves = Knight.findMoves(board, myPosition, pieceColor);
