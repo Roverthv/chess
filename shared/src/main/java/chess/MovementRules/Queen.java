@@ -18,10 +18,6 @@ public class Queen implements PiecePatterns {
             {0, -5}, {0, -6}, {0, -7}}};
     public Queen() {}
 
-    public static int[][][] getMoveData(){
-        return movementPatterns;
-    }
-
     public static List<ChessMove> findMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor) {
         List<ChessMove> moves = new ArrayList<>();
         for (int[][] pattern : movementPatterns) {

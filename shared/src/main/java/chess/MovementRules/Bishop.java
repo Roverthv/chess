@@ -12,10 +12,6 @@ public class Bishop implements PiecePatterns {
             {-5, -5}, {-6, -6}, {-7, -7}}, {{1, -1}, {2, -2}, {3, -3}, {4, -4}, {5, -5}, {6, -6}, {7, -7}}};
     public Bishop() {}
 
-    public static int[][][] getMoveData(){
-        return movementPatterns;
-    }
-
     public static List<ChessMove> findMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor) {
         List<ChessMove> moves = new ArrayList<>();
         for (int[][] pattern : movementPatterns) {

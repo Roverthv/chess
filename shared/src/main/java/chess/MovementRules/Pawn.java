@@ -14,10 +14,6 @@ public class Pawn implements PiecePatterns {
     private static final int[][][] movementPatternsBlack = {{{-2,0}},{{-1,0}},{{-1,-1},{-1,1}}};
     public Pawn() {}
 
-    public static int[][][] getMoveData(){
-        return movementPatterns;
-    }
-
     private static List<ChessMove> evaluateMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, Boolean hasMoved, int[][][] movementPatterns){
         List<ChessMove> moves = new ArrayList<>();
         int[] offset;

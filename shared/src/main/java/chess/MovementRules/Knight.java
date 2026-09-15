@@ -10,17 +10,13 @@ import java.util.List;
 
 public class Knight implements PiecePatterns {
 
-    private static final int[][] movementPatterns = {{2, 1}, {2, -1},
-            {-1, 2}, {-1, -2}, {-2, -1}, {-2, 1}, {1, -2}, {1, 2}};
+    private static final int[][][] movementPatterns = {{{2, 1}, {2, -1},
+            {-1, 2}, {-1, -2}, {-2, -1}, {-2, 1}, {1, -2}, {1, 2}}};
     public Knight() {}
-
-    public static int[][] getMoveData(){
-        return movementPatterns;
-    }
 
     public static List<ChessMove> findMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor) {
         List<ChessMove> moves = new ArrayList<>();
-            for (int[] offset : movementPatterns) {
+            for (int[] offset : movementPatterns[0]) {
                 ChessPosition target = myPosition.addOffset(offset[0], offset[1]);
                 var valid = board.isValidMove(target, pieceColor);
                 if (valid[0] && !valid[1]) {
