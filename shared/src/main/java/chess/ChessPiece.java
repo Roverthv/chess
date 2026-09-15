@@ -1,6 +1,6 @@
 package chess;
 
-import chess.MovementRules.*;
+import chess.MovementRules.MoveRules;
 
 import java.util.Collection;
 import java.util.List;
@@ -59,16 +59,7 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         //throw new RuntimeException("Not implemented");
         // create library of movements for each type and create checks for validity
-        List<ChessMove> moves;
-        switch(type) {
-            case PieceType.KING -> moves = King.findMoves(board, myPosition, pieceColor);
-            case PieceType.QUEEN -> moves = Queen.findMoves(board, myPosition, pieceColor);
-            case PieceType.BISHOP -> moves = Bishop.findMoves(board, myPosition, pieceColor);
-            case PieceType.KNIGHT -> moves = Knight.findMoves(board, myPosition, pieceColor);
-            case PieceType.ROOK -> moves = Rook.findMoves(board, myPosition, pieceColor);
-            case PieceType.PAWN -> moves = Pawn.findMoves(board,myPosition,pieceColor, hasMoved);
-            default -> throw new IllegalStateException("Unexpected value: " + type);
-        }
+        List<ChessMove> moves = MoveRules.determineMoves(board, myPosition, type, pieceColor, hasMoved);
         hasMoved = true;
         return moves;
     }
