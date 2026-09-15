@@ -1,6 +1,7 @@
 package chess.MovementRules;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 
@@ -15,5 +16,5 @@ public interface PiecePatterns {
         return movementPatterns;
     }
 
-    default Collection<ChessMove> findMoves(ChessBoard board, ChessPosition myPosition) {throw new RuntimeException("Not implemented");}
+    static Collection<ChessMove> findMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor) {throw new RuntimeException("Not implemented");}
 }
