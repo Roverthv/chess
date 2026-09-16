@@ -4,6 +4,7 @@ import chess.MovementRules.MoveRules;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -50,6 +51,25 @@ public class ChessPiece {
     }
 
     public boolean getHasMoved(){ return hasMoved;}
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type && Objects.equals(hasMoved, that.hasMoved);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type, hasMoved);
+    }
+
+    @Override
+    public String toString(){
+        return String.format("%s %s", getPieceType().toString(), getPieceType().toString());
+    }
 
     /**
      * Calculates all the positions a chess piece can move to
