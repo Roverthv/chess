@@ -1,9 +1,6 @@
 package chess.MovementRules;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +46,14 @@ public class Pawn implements PiecePatterns {
             var valid = board.isValidMove(target, pieceColor);
             if (valid[0] && !valid[1]) {
                 if (target.getRow() == promoteRow){
-                    // figure out how to have them select new piece type
+                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.QUEEN));
+                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.ROOK));
+                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.BISHOP));
+                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.KNIGHT));
+                }
+                else {
                     moves.add(new ChessMove(myPosition, target, null));
                 }
-                moves.add(new ChessMove(myPosition, target, null));
             }
             else {
                 break;
@@ -63,10 +64,14 @@ public class Pawn implements PiecePatterns {
             var valid = board.isValidMove(target, pieceColor);
             if(valid[0] && valid[1]){
                 if (target.getRow() == promoteRow){
-                    // figure out how to have them select new piece type
+                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.QUEEN));
+                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.ROOK));
+                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.BISHOP));
+                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.KNIGHT));
+                }
+                else {
                     moves.add(new ChessMove(myPosition, target, null));
                 }
-                moves.add(new ChessMove(myPosition, target, null));
             }
         }
         return moves;
