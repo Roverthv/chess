@@ -68,7 +68,7 @@ public class ChessPiece {
 
     @Override
     public String toString(){
-        return String.format("%s %s", getPieceType().toString(), getPieceType().toString());
+        return String.format("%s %s", getTeamColor().toString(), getPieceType().toString());
     }
 
     /**
