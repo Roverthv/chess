@@ -49,7 +49,8 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-
+        return getBoard().getPiece(startPosition).pieceMoves(getBoard(), startPosition);
+    // right now just base move rules.
     }
 
     /**
@@ -59,7 +60,11 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        getBoard().addPiece(move.getEndPosition(), getBoard().getPiece(move.getStartPosition()));
+        if(move.getPromotionPiece() != null){
+            getBoard().getPiece(move.getEndPosition()).promote(move.getPromotionPiece());
+        }
+        getBoard().removePiece(move.getEndPosition());
     }
 
     /**

@@ -15,7 +15,7 @@ import java.util.Objects;
 public class ChessPiece {
 
     private final ChessGame.TeamColor pieceColor;
-    private final PieceType type;
+    private PieceType type;
     private Boolean hasMoved;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
@@ -69,6 +69,13 @@ public class ChessPiece {
     @Override
     public String toString(){
         return String.format("%s %s", getTeamColor().toString(), getPieceType().toString());
+    }
+
+    public void promote(PieceType promotion){
+        if(type != PieceType.PAWN){
+            throw new RuntimeException("Not Implemented");
+        }
+        type = promotion;
     }
 
     /**
