@@ -77,7 +77,8 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         // either implement way to constantly keep track of King pieces or make second checkCheck function that starts by locating them.
-        CheckmateRules.checkCheck(getBoard(), )
+        //CheckmateRules.checkCheck(getBoard(), )
+        throw new RuntimeException("Not implemented");
     }
 
     /**

@@ -115,7 +115,10 @@ public class MoveRules {
     public static List<ChessMove> determineMoves(ChessBoard board, ChessPosition myPosition, ChessPiece.PieceType type, ChessGame.TeamColor pieceColor, Boolean hasMoved){
         List<ChessMove> moves;
         switch(type) {
-            case ChessPiece.PieceType.KING -> moves = findMoves(board, myPosition, pieceColor, KingPatterns);
+            case ChessPiece.PieceType.KING -> {
+                moves = findMoves(board, myPosition, pieceColor, KingPatterns);
+                moves.removeIf(move -> CheckmateRules.checkCheck(board, move.getEndPosition(), pieceColor));
+            }
             case ChessPiece.PieceType.QUEEN -> moves = findMoves(board, myPosition, pieceColor, QueenPatterns);
             case ChessPiece.PieceType.BISHOP -> moves = findMoves(board, myPosition, pieceColor, BishopPatterns);
             case ChessPiece.PieceType.KNIGHT -> moves = findMoves(board, myPosition, pieceColor, KnightPatterns);
@@ -124,5 +127,23 @@ public class MoveRules {
             default -> throw new IllegalStateException("Unexpected value: " + type);
         }
         return moves;
+    }
+
+    public static int[][][] getPatterns(ChessPiece.PieceType type){
+        switch (type){
+            case KING -> {return KingPatterns;}
+            case QUEEN -> {return QueenPatterns;}
+            case KNIGHT -> {return KnightPatterns;}
+            case ROOK -> {return RookPatterns;}
+            case BISHOP -> {return BishopPatterns;}
+            default -> throw new IllegalStateException("Unexpected value: " + type);
+        }
+    }
+    public static int[][][] getPawnPatterns(ChessGame.TeamColor color){
+        switch (color){
+            case WHITE -> {return PawnPatternsWhite;}
+            case BLACK -> {return PawnPatternsBlack;}
+            default -> throw new IllegalStateException("Unexpected value: " + color);
+        }
     }
 }
