@@ -13,13 +13,9 @@ import java.util.Collection;
 public class ChessGame {
     TeamColor turn;
     ChessBoard gameboard;
-    ChessPosition WhiteKing;
-    ChessPosition BlackKing;
     public ChessGame() {
         gameboard = new ChessBoard();
         turn = TeamColor.WHITE;
-        WhiteKing = new ChessPosition(1,5);
-        BlackKing = new ChessPosition(8,5);
     }
 
     /**
@@ -58,19 +54,10 @@ public class ChessGame {
         if (toMove.getTeamColor() != getTeamTurn()){
             return null;
         }
-        ChessPosition KingSpot;
-        if(getTeamTurn() == TeamColor.WHITE){
-            KingSpot = WhiteKing;
-        }
-        else if(getTeamTurn() == TeamColor.BLACK){
-            KingSpot = BlackKing;
-        }
-        else{
-            throw new IllegalStateException("Unexpected value: " + getTeamTurn());
-        }
         Collection<ChessMove> moves = toMove.pieceMoves(getBoard(), startPosition);
         for(ChessMove move : moves){
             ChessBoard testBoard = testMove(move);
+            ChessPosition KingSpot = testBoard.findKing(getTeamTurn());
             if(CheckmateRules.checkCheck(testBoard, KingSpot,getTeamTurn())){
                 moves.remove(move);
             }
@@ -110,16 +97,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition KingSpot;
-        if(teamColor == TeamColor.WHITE){
-            KingSpot = WhiteKing;
-        }
-        else if(teamColor == TeamColor.BLACK){
-            KingSpot = BlackKing;
-        }
-        else{
-            throw new IllegalStateException("Unexpected value: " + teamColor);
-        }
+        ChessPosition KingSpot = getBoard().findKing(teamColor);
         return CheckmateRules.checkCheck(getBoard(), KingSpot, teamColor);
         //throw new RuntimeException("Not implemented");
     }

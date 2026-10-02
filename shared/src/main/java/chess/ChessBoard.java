@@ -11,13 +11,13 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
-    private ChessPiece[][] board = new ChessPiece[8][8];
+    private final ChessPiece[][] board = new ChessPiece[8][8];
 
     public ChessBoard() {
         resetBoard();
     }
     public ChessBoard(ChessBoard toCopy) {
-        this.board = toCopy.board;
+        copyBoard(toCopy);
     }
     /**
      * Adds a chess piece to the chessboard
@@ -90,6 +90,27 @@ public class ChessBoard {
         addPiece(new ChessPosition(1,4), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN));
         addPiece(new ChessPosition(8,5), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING));
         addPiece(new ChessPosition(1,5), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING));
+    }
+
+    public void copyBoard(ChessBoard board){
+        for(int i=1; i<9;i++){
+            for(int j=1; j<9; j++){
+                ChessPosition spot = new ChessPosition(i,j);
+                addPiece(spot, board.getPiece(spot));
+            }
+        }
+    }
+
+    public ChessPosition findKing(ChessGame.TeamColor team){
+        for(int i=1; i<9;i++){
+            for(int j=1; j<9; j++){
+                ChessPosition spot =new ChessPosition(i,j);
+                if(getPiece(spot).getPieceType() == ChessPiece.PieceType.KING && getPiece(spot).getTeamColor() == team){
+                    return spot;
+                }
+            }
+        }
+        throw new IllegalStateException("Playing Game with no King");
     }
 
     public boolean[] isValidMove(ChessPosition target, ChessGame.TeamColor allegiance){

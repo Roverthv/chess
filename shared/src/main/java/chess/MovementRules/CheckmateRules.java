@@ -47,7 +47,7 @@ public class CheckmateRules {
     }
 
     private static boolean checkPawns(ChessBoard board, ChessPosition position, ChessGame.TeamColor team){
-        int[][][] movementPatterns = {{}};
+        int[][][] movementPatterns = {{{}}};
         movementPatterns[0][0] = MoveRules.getPawnPatterns(team)[0][1];
         ChessPiece.PieceType[] threats = {ChessPiece.PieceType.PAWN};
         return checkPattern(board, position, team, movementPatterns, threats);
@@ -58,6 +58,7 @@ public class CheckmateRules {
             line:
             for(int[] offset : pattern){
                 ChessPosition attack = position.addOffset(offset[0], offset[1]);
+                if(attack.getRow() < 1 || attack.getRow() > 8 || attack.getColumn() < 1 ||attack.getColumn() > 8){break;}
                 ChessPiece attacker = board.getPiece(attack);
                 if(attacker != null){
                     if (attacker.getTeamColor() == team){
