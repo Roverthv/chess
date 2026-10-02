@@ -58,7 +58,24 @@ public class ChessGame {
         if (toMove.getTeamColor() != getTeamTurn()){
             return null;
         }
-        return toMove.pieceMoves(getBoard(), startPosition);
+        ChessPosition KingSpot;
+        if(getTeamTurn() == TeamColor.WHITE){
+            KingSpot = WhiteKing;
+        }
+        else if(getTeamTurn() == TeamColor.BLACK){
+            KingSpot = BlackKing;
+        }
+        else{
+            throw new IllegalStateException("Unexpected value: " + getTeamTurn());
+        }
+        Collection<ChessMove> moves = toMove.pieceMoves(getBoard(), startPosition);
+        for(ChessMove move : moves){
+            ChessBoard testBoard = testMove(move);
+            if(CheckmateRules.checkCheck(testBoard, KingSpot,getTeamTurn())){
+                moves.remove(move);
+            }
+        }
+        return moves;
     // right now just base move rules.
     }
 
@@ -74,6 +91,16 @@ public class ChessGame {
             getBoard().getPiece(move.getEndPosition()).promote(move.getPromotionPiece());
         }
         getBoard().removePiece(move.getEndPosition());
+    }
+
+    private ChessBoard testMove(ChessMove move){
+        ChessBoard testBoard = new ChessBoard(getBoard());
+        testBoard.addPiece(move.getEndPosition(), testBoard.getPiece(move.getStartPosition()));
+        if(move.getPromotionPiece() != null){
+            testBoard.getPiece(move.getEndPosition()).promote(move.getPromotionPiece());
+        }
+        testBoard.removePiece(move.getEndPosition());
+        return testBoard;
     }
 
     /**
