@@ -13,10 +13,13 @@ import java.util.Collection;
 public class ChessGame {
     TeamColor turn;
     ChessBoard gameboard;
+    ChessPosition WhiteKing;
+    ChessPosition BlackKing;
     public ChessGame() {
         gameboard = new ChessBoard();
         turn = TeamColor.WHITE;
-
+        WhiteKing = new ChessPosition(1,5);
+        BlackKing = new ChessPosition(8,5);
     }
 
     /**
@@ -51,7 +54,11 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        return getBoard().getPiece(startPosition).pieceMoves(getBoard(), startPosition);
+        ChessPiece toMove = getBoard().getPiece(startPosition);
+        if (toMove.getTeamColor() != getTeamTurn()){
+            return null;
+        }
+        return toMove.pieceMoves(getBoard(), startPosition);
     // right now just base move rules.
     }
 
@@ -76,9 +83,18 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        // either implement way to constantly keep track of King pieces or make second checkCheck function that starts by locating them.
-        //CheckmateRules.checkCheck(getBoard(), )
-        throw new RuntimeException("Not implemented");
+        ChessPosition KingSpot;
+        if(teamColor == TeamColor.WHITE){
+            KingSpot = WhiteKing;
+        }
+        else if(teamColor == TeamColor.BLACK){
+            KingSpot = BlackKing;
+        }
+        else{
+            throw new IllegalStateException("Unexpected value: " + teamColor);
+        }
+        return CheckmateRules.checkCheck(getBoard(), KingSpot, teamColor);
+        //throw new RuntimeException("Not implemented");
     }
 
     /**
