@@ -13,9 +13,7 @@ public class ChessBoard {
 
     private final ChessPiece[][] board = new ChessPiece[8][8];
 
-    public ChessBoard() {
-        resetBoard();
-    }
+    public ChessBoard() {}
     public ChessBoard(ChessBoard toCopy) {
         copyBoard(toCopy);
     }
@@ -105,7 +103,7 @@ public class ChessBoard {
         for(int i=1; i<9;i++){
             for(int j=1; j<9; j++){
                 ChessPosition spot =new ChessPosition(i,j);
-                if(getPiece(spot).getPieceType() == ChessPiece.PieceType.KING && getPiece(spot).getTeamColor() == team){
+                if(getPiece(spot)!= null && getPiece(spot).getPieceType() == ChessPiece.PieceType.KING && getPiece(spot).getTeamColor() == team){
                     return spot;
                 }
             }

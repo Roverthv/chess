@@ -15,6 +15,7 @@ public class ChessGame {
     ChessBoard gameboard;
     public ChessGame() {
         gameboard = new ChessBoard();
+        gameboard.resetBoard();
         turn = TeamColor.WHITE;
     }
 
@@ -51,19 +52,21 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece toMove = getBoard().getPiece(startPosition);
-        if (toMove.getTeamColor() != getTeamTurn()){
+        if (toMove == null || toMove.getTeamColor() != getTeamTurn()){
             return null;
         }
         Collection<ChessMove> moves = toMove.pieceMoves(getBoard(), startPosition);
-        for(ChessMove move : moves){
-            ChessBoard testBoard = testMove(move);
-            ChessPosition KingSpot = testBoard.findKing(getTeamTurn());
-            if(CheckmateRules.checkCheck(testBoard, KingSpot,getTeamTurn())){
-                moves.remove(move);
-            }
-        }
+        moves.removeIf(move -> moveInvalid(move));
         return moves;
-    // right now just base move rules.
+    }
+
+    private boolean moveInvalid(ChessMove move){
+        ChessBoard testBoard = testMove(move);
+        ChessPosition KingSpot = testBoard.findKing(getTeamTurn());
+        if(CheckmateRules.checkCheck(testBoard, KingSpot,getTeamTurn())){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -77,7 +80,7 @@ public class ChessGame {
         if(move.getPromotionPiece() != null){
             getBoard().getPiece(move.getEndPosition()).promote(move.getPromotionPiece());
         }
-        getBoard().removePiece(move.getEndPosition());
+        getBoard().removePiece(move.getStartPosition());
     }
 
     private ChessBoard testMove(ChessMove move){
@@ -86,7 +89,7 @@ public class ChessGame {
         if(move.getPromotionPiece() != null){
             testBoard.getPiece(move.getEndPosition()).promote(move.getPromotionPiece());
         }
-        testBoard.removePiece(move.getEndPosition());
+        testBoard.removePiece(move.getStartPosition());
         return testBoard;
     }
 
