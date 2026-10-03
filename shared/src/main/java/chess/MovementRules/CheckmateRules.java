@@ -47,8 +47,9 @@ public class CheckmateRules {
     }
 
     private static boolean checkPawns(ChessBoard board, ChessPosition position, ChessGame.TeamColor team){
-        int[][][] movementPatterns = {{{}}};
-        movementPatterns[0][0] = MoveRules.getPawnPatterns(team)[0][1];
+        int[][][] movementPatterns = {{{},{}}};
+        movementPatterns[0][0] = MoveRules.getPawnPatterns(team)[1][0];
+        movementPatterns[0][1] = MoveRules.getPawnPatterns(team)[1][1];
         ChessPiece.PieceType[] threats = {ChessPiece.PieceType.PAWN};
         return checkPattern(board, position, team, movementPatterns, threats);
     }
