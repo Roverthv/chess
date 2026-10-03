@@ -73,11 +73,24 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        getBoard().addPiece(move.getEndPosition(), getBoard().getPiece(move.getStartPosition()));
+        ChessPiece pieceToMove = getBoard().getPiece(move.getStartPosition());
+        if(pieceToMove == null || pieceToMove.getTeamColor() != getTeamTurn() || !validMoves(move.getStartPosition()).contains(move)){
+            throw new InvalidMoveException("Illegal Move Detected");
+        }
+        getBoard().addPiece(move.getEndPosition(), pieceToMove);
         if(move.getPromotionPiece() != null){
             getBoard().getPiece(move.getEndPosition()).promote(move.getPromotionPiece());
         }
         getBoard().removePiece(move.getStartPosition());
+
+        if(getTeamTurn() == TeamColor.WHITE){
+            setTeamTurn(TeamColor.BLACK);
+        } else if (getTeamTurn() == TeamColor.BLACK){
+            setTeamTurn(TeamColor.WHITE);
+        }
+        else{
+            throw new IllegalStateException("Unexpected value: " + getTeamTurn());
+        }
     }
 
     private ChessBoard testMove(ChessMove move){
