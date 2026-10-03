@@ -3,6 +3,7 @@ package chess;
 import chess.MovementRules.CheckmateRules;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * A class that can manage a chess game, making moves on a board
@@ -163,5 +164,18 @@ public class ChessGame {
         return gameboard;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return turn == chessGame.turn && Objects.equals(gameboard, chessGame.gameboard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(turn, gameboard);
+    }
 
 }

@@ -115,10 +115,7 @@ public class MoveRules {
     public static List<ChessMove> determineMoves(ChessBoard board, ChessPosition myPosition, ChessPiece.PieceType type, ChessGame.TeamColor pieceColor, Boolean hasMoved){
         List<ChessMove> moves;
         switch(type) {
-            case ChessPiece.PieceType.KING -> {
-                moves = findMoves(board, myPosition, pieceColor, KingPatterns);
-                moves.removeIf(move -> CheckmateRules.checkCheck(board, move.getEndPosition(), pieceColor));
-            }
+            case ChessPiece.PieceType.KING -> moves = findMoves(board, myPosition, pieceColor, KingPatterns);
             case ChessPiece.PieceType.QUEEN -> moves = findMoves(board, myPosition, pieceColor, QueenPatterns);
             case ChessPiece.PieceType.BISHOP -> moves = findMoves(board, myPosition, pieceColor, BishopPatterns);
             case ChessPiece.PieceType.KNIGHT -> moves = findMoves(board, myPosition, pieceColor, KnightPatterns);
