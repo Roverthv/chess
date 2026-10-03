@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -115,6 +117,25 @@ public class ChessBoard {
             }
         }
         throw new IllegalStateException("Playing Game with no King");
+    }
+
+    public Collection<ChessPosition> findTeamPositions(ChessGame.TeamColor team){
+        Collection<ChessPosition> teamSpots = new ArrayList<>();
+        for(int i=1; i<9;i++){
+            for(int j=1; j<9; j++){
+                ChessPosition spot =new ChessPosition(i,j);
+                if(getPiece(spot)!= null && getPiece(spot).getTeamColor() == team){
+                    teamSpots.add(spot);
+                }
+            }
+        }
+        if(teamSpots.isEmpty()){
+            throw new IllegalStateException("Playing Game with no Pieces");
+        }
+        else{
+            return teamSpots;
+        }
+
     }
 
     public boolean[] isValidMove(ChessPosition target, ChessGame.TeamColor allegiance){
