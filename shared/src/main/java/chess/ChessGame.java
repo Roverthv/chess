@@ -52,21 +52,18 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece toMove = getBoard().getPiece(startPosition);
-        if (toMove == null || toMove.getTeamColor() != getTeamTurn()){
+        if (toMove == null){ // || toMove.getTeamColor() != getTeamTurn()){
             return null;
         }
         Collection<ChessMove> moves = toMove.pieceMoves(getBoard(), startPosition);
-        moves.removeIf(move -> moveInvalid(move));
+        moves.removeIf(move -> moveInvalid(move, toMove.getTeamColor()));
         return moves;
     }
 
-    private boolean moveInvalid(ChessMove move){
+    private boolean moveInvalid(ChessMove move, TeamColor team){
         ChessBoard testBoard = testMove(move);
-        ChessPosition KingSpot = testBoard.findKing(getTeamTurn());
-        if(CheckmateRules.checkCheck(testBoard, KingSpot,getTeamTurn())){
-            return true;
-        }
-        return false;
+        ChessPosition KingSpot = testBoard.findKing(team);
+        return CheckmateRules.checkCheck(testBoard, KingSpot, team);
     }
 
     /**

@@ -32,7 +32,7 @@ public class CheckmateRules {
 
 
     private static boolean checkKnightsAndKing(ChessBoard board, ChessPosition position, ChessGame.TeamColor team){
-        boolean inCheck = false;
+        boolean inCheck;
         int[][][] movementPatterns = MoveRules.getPatterns(ChessPiece.PieceType.KING);
         ChessPiece.PieceType[] threats ={ChessPiece.PieceType.KING};
         inCheck = checkPattern(board, position,team, movementPatterns, threats);
@@ -55,7 +55,6 @@ public class CheckmateRules {
 
     private static boolean checkPattern(ChessBoard board, ChessPosition position, ChessGame.TeamColor team, int[][][] movementPatterns, ChessPiece.PieceType[] threats){
         for(int[][] pattern : movementPatterns){
-            line:
             for(int[] offset : pattern){
                 ChessPosition attack = position.addOffset(offset[0], offset[1]);
                 if(attack.getRow() < 1 || attack.getRow() > 8 || attack.getColumn() < 1 ||attack.getColumn() > 8){break;}
@@ -68,11 +67,8 @@ public class CheckmateRules {
                         if (attacker.getPieceType() == threat){
                             return true;
                         }
-                        else{
-                            break line;
-                        }
                     }
-
+                    break;
                 }
             }
         }

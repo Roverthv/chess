@@ -24,6 +24,12 @@ public class ChessPiece {
         hasMoved = false;
     }
 
+    public ChessPiece(ChessPiece toCopy){
+        this.pieceColor = toCopy.pieceColor;
+        this.type = toCopy.type;
+        this.hasMoved = toCopy.hasMoved;
+    }
+
     /**
      * The various different chess piece options
      */
