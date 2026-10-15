@@ -1,6 +1,7 @@
 package dataaccess;
 
 import DataStructures.AuthData;
+import DataStructures.GameData;
 import DataStructures.UserData;
 import chess.ChessGame;
 
@@ -8,9 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryDataAccess implements DataAccess {
-    private final Map<String,UserData> users = new HashMap<>();
+    private final Map<String, UserData> users = new HashMap<>();
     private final Map<String, AuthData> authTokens = new HashMap<>();
-    private final Map<String, ChessGame> games = new HashMap<>();
+    private final Map<String, GameData> games = new HashMap<>();
 
     @Override
     public void clear() {
@@ -19,8 +20,8 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void register(UserData userData){
-       users.put(userData.getUsername(), userData);
+    public void register(UserData userData) {
+        users.put(userData.getUsername(), userData);
     }
 
     @Override
@@ -46,5 +47,31 @@ public class MemoryDataAccess implements DataAccess {
     @Override
     public void removeAuthData(String authToken) {
         authTokens.remove(authToken);
+    }
+
+    @Override
+    public void addGametoUser(String username, String gameID) {
+        users.get(username).addGame(gameID);
+    }
+
+    @Override
+    public void removeGamefromUser(String username, String gameID) {
+        users.get(username).removeGame(gameID);
+    }
+
+    @Override
+    public void newGame(String gameID) {
+        games.put(gameID, new GameData(new ChessGame()));
+    }
+
+    @Override
+    public void removeGame(String gameID) {
+        games.remove(gameID);
+
+    }
+
+    @Override
+    public GameData getGame(String gameID) {
+        return games.get(gameID);
     }
 }
