@@ -2,6 +2,7 @@ package dataaccess;
 
 import DataStructures.AuthData;
 import DataStructures.UserData;
+import chess.ChessGame;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Map;
 public class MemoryDataAccess implements DataAccess {
     private final Map<String,UserData> users = new HashMap<>();
     private final Map<String, AuthData> authTokens = new HashMap<>();
+    private final Map<String, ChessGame> games = new HashMap<>();
 
     @Override
     public void clear() {
