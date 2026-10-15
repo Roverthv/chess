@@ -6,14 +6,15 @@ import dataaccess.DataAccessException;
 import java.util.Objects;
 
 public class GameData {
-    ChessGame game;
-    String BlackPlayer;
-    String WhitePlayer;
-    GameData(ChessGame game){
+    private final ChessGame game;
+    private String BlackPlayer;
+    private String WhitePlayer;
+
+    public GameData(ChessGame game){
         this.game = game;
     }
 
-    void setPlayer(String username, ChessGame.TeamColor team) throws DataAccessException{
+    public void setPlayer(String username, ChessGame.TeamColor team) throws DataAccessException{
         if (team == ChessGame.TeamColor.BLACK){
             if (BlackPlayer == null){BlackPlayer = username;}
             else{throw new DataAccessException("Team Already taken");}
@@ -24,7 +25,7 @@ public class GameData {
         }
     }
 
-    String getPlayer(ChessGame.TeamColor team){
+    public String getPlayer(ChessGame.TeamColor team){
         if (team == ChessGame.TeamColor.BLACK){return BlackPlayer;}
         if (team == ChessGame.TeamColor.WHITE){return WhitePlayer;}
         else {throw new RuntimeException("Invalid Team");}
