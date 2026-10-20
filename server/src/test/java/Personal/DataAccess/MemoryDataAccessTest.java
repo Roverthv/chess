@@ -20,13 +20,13 @@ class MemoryDataAccessTest {
         database = new MemoryDataAccess();
     }
 
-    void createUser(){
+    void createUser() {
         var userdata = new UserData("testuser", "test password", new ArrayList<>());
         database.register(userdata);
     }
 
-    void createAuth(){
-        var authdata = new AuthData("testtoken", "testuser");
+    void createAuth() {
+        var authdata = new AuthData(1, "testuser");
         database.addAuthData(authdata);
     }
 
@@ -35,10 +35,10 @@ class MemoryDataAccessTest {
         createUser();
         createAuth();
         assertNotNull(database.getUser("testuser"));
-        assertNotNull(database.getAuthData("testtoken"));
+        assertNotNull(database.getAuthData(1));
         database.clear();
         assertNull(database.getUser("testuser"));
-        assertNull(database.getAuthData("testtoken"));
+        assertNull(database.getAuthData(1));
 
     }
 
@@ -65,20 +65,20 @@ class MemoryDataAccessTest {
     @Test
     void addAuthData() {
         createAuth();
-        assertNotNull(database.getAuthData("testtoken"));
+        assertNotNull(database.getAuthData(1));
     }
 
     @Test
     void getAuthData() {
         createAuth();
-        assertEquals(new AuthData("testtoken", "testuser"), database.getAuthData("testtoken"));
+        assertEquals(new AuthData(1, "testuser"), database.getAuthData(1));
     }
 
     @Test
     void removeAuthData() {
         createAuth();
-        assertNotNull(database.getAuthData("testtoken"));
-        database.removeAuthData("testtoken");
-        assertNull(database.getAuthData("testtoken"));
+        assertNotNull(database.getAuthData(1));
+        database.removeAuthData(1);
+        assertNull(database.getAuthData(1));
     }
 }

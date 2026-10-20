@@ -2,9 +2,14 @@ package DataStructures;
 
 import java.util.Objects;
 
-public record AuthData(String authtoken, String username) {
-    public String getAuthToken(){return authtoken;}
-    public String getUsername(){return username;}
+public record AuthData(int authtoken, String username) {
+    public int getAuthToken() {
+        return authtoken;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 
     @Override
     public boolean equals(Object o) {
