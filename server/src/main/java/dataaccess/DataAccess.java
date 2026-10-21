@@ -16,9 +16,9 @@ public interface DataAccess {
 
     void addAuthData(AuthData authData);
 
-    AuthData getAuthData(int authToken);
+    AuthData getAuthData(String authToken);
 
-    void removeAuthData(int authToken);
+    void removeAuthData(String authToken);
 
     void addGametoUser(String username, String gameID);
 

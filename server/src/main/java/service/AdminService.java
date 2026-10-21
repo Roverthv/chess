@@ -4,7 +4,7 @@ import DataStructures.AuthData;
 import DataStructures.UserData;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
-
+import java.util.UUID;
 import java.util.ArrayList;
 
 public class AdminService {
@@ -14,40 +14,48 @@ public class AdminService {
         this.database = database;
     }
 
-    public void authenticate(int authtoken) throws UnauthorizedException {
+    public void authenticate(String authtoken) throws UnauthorizedException {
         var token = database.getAuthData(authtoken);
         if (token == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
     }
 
-    public int createAuth(String username) {
-        int authToken = username.hashCode();
+    public String createAuth(String username) {
+        String authToken = generateToken();
         var authdata = new AuthData(username, authToken);
         database.addAuthData(authdata);
         return authToken;
     }
 
-    public void deleteAuth(int authtoken) {
+    public void deleteAuth(String authtoken) {
         database.removeAuthData(authtoken);
     }
 
-    public int createUser(String username, String password) throws DataAccessException {
+    public String createUser(String username, String password, String email) throws DataAccessException {
         var exists = database.getUser(username);
-        if (exists == null) {
-            throw new DataAccessException("Error: bad request");
+        if (exists != null) {
+            throw new DataAccessException("Error: already taken");
         }
-        UserData newUser = new UserData(username, password, new ArrayList<String>());
+        UserData newUser = new UserData(username, password, email, new ArrayList<String>());
         database.register(newUser);
         return createAuth(username);
 
     }
 
-    public void deleteUser(int authtoken, String username) {
+    public void deleteUser(String authtoken, String username) {
         database.removeUser(username);
     }
 
     public void clear() {
         database.clear();
+    }
+
+    private String generateToken() {
+        String token;
+        do{
+            token = UUID.randomUUID().toString();
+        }while(database.getAuthData(token)!=null);
+        return token;
     }
 }
