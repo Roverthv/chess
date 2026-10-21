@@ -28,10 +28,10 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
-        javalin.delete("/db", this::clearDb);
+        javalin.delete("/db", this::clear);
         javalin.delete("/session", this::logout);
         javalin.post("/session/{username}/{password}", this::login);
-        javalin.post("/user", this::register);
+        javalin.post("/user/{username}/{password}", this::register);
         javalin.post("/game", this::newGame);
         javalin.put("/game", this::joinGame);
         javalin.get("/game", this::getGame);
@@ -44,9 +44,6 @@ public class Server {
     }
 
     private void newGame(@NotNull Context ctx) {
-    }
-
-    private void register(@NotNull Context ctx) {
     }
 
     private void login(@NotNull Context ctx) {
@@ -73,7 +70,10 @@ public class Server {
     private void logout(@NotNull Context ctx) {
     }
 
-    private void clearDb(Context ctx) {
+    private void register(@NotNull Context ctx) {
+    }
+
+    private void clear(Context ctx) {
         var r = Map.of();
         var json = new Gson();
         ctx.json(json.toJson(r));
