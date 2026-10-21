@@ -17,13 +17,13 @@ public class AdminService {
     public void authenticate(int authtoken) throws UnauthorizedException {
         var token = database.getAuthData(authtoken);
         if (token == null) {
-            throw new UnauthorizedException("Invalid AuthToken");
+            throw new UnauthorizedException("Error: unauthorized");
         }
     }
 
     public int createAuth(String username) {
         int authToken = username.hashCode();
-        var authdata = new AuthData(authToken, username);
+        var authdata = new AuthData(username, authToken);
         database.addAuthData(authdata);
         return authToken;
     }
@@ -35,7 +35,7 @@ public class AdminService {
     public int createUser(String username, String password) throws DataAccessException {
         var exists = database.getUser(username);
         if (exists == null) {
-            throw new DataAccessException("Username is Taken");
+            throw new DataAccessException("Error: bad request");
         }
         UserData newUser = new UserData(username, password, new ArrayList<String>());
         database.register(newUser);

@@ -2,7 +2,7 @@ package DataStructures;
 
 import java.util.Objects;
 
-public record AuthData(int authtoken, String username) {
+public record AuthData(String username, int authtoken) {
     public int getAuthToken() {
         return authtoken;
     }
