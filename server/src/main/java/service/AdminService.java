@@ -39,7 +39,7 @@ public class AdminService {
         if (exists != null) {
             throw new DataAccessException("Error: already taken");
         }
-        UserData newUser = new UserData(username, password, email, new ArrayList<String>());
+        UserData newUser = new UserData(username, password, email, new ArrayList<Integer>());
         database.register(newUser);
         return createAuth(username);
 
