@@ -34,9 +34,10 @@ public class UserService {
 
     public void createGame(String authtoken) {
         var username = getUsername(authtoken);
-        var gameData = new GameData(new ChessGame());
         var gameID = makeGameID();
         //add game to userlist and database
+        database.newGame(gameID);
+        database.getUser(username).addGame(gameID);
     }
 
     public void joinGame(String authtoken, String id) {
