@@ -20,13 +20,13 @@ public interface DataAccess {
 
     void removeAuthData(String authToken);
 
-    void addGametoUser(String username, String gameID);
+    void addGametoUser(String username, int gameID);
 
-    void removeGamefromUser(String username, String gameID);
+    void removeGamefromUser(String username, int gameID);
 
-    void newGame(String gameID);
+    void newGame(int gameID);
 
-    void removeGame(String gameID);
+    void removeGame(int gameID);
 
-    GameData getGame(String gameID);
+    GameData getGame(int gameID);
 }

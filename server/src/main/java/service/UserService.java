@@ -1,9 +1,13 @@
 package service;
 
+import DataStructures.GameData;
+import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 
 import java.util.Collection;
+import java.util.Random;
+import java.util.UUID;
 
 public class UserService {
     DataAccess database;
@@ -29,11 +33,29 @@ public class UserService {
     }
 
     public void createGame(String authtoken) {
+        var username = getUsername(authtoken);
+        var gameData = new GameData(new ChessGame());
+        var gameID = makeGameID();
+        //add game to userlist and database
     }
 
     public void joinGame(String authtoken, String id) {
     }
 
     public /*Collection<String>*/ void listGames(String authtoken) {
+    }
+
+    private String getUsername(String authToken) {
+        return database.getAuthData(authToken).getUsername();
+    }
+
+    private int makeGameID() {
+
+        int id;
+        Random random = new Random();
+        do {
+            id = random.nextInt(10000);
+        } while (database.getGame(id) != null);
+        return id;
     }
 }

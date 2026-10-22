@@ -3,7 +3,7 @@ package DataStructures;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public record UserData(String username, String password, String email, ArrayList<String> gameIDs) {
+public record UserData(String username, String password, String email, ArrayList<Integer> gameIDs) {
     public String getUsername() {
         return username;
     }
@@ -16,15 +16,15 @@ public record UserData(String username, String password, String email, ArrayList
         return password.equals(passGiven);
     }
 
-    public ArrayList<String> getGameList() {
+    public ArrayList<Integer> getGameList() {
         return gameIDs;
     }
 
-    public void addGame(String ID) {
+    public void addGame(int ID) {
         gameIDs.add(ID);
     }
 
-    public void removeGame(String ID) {
+    public void removeGame(int ID) {
         gameIDs.remove(ID);
     }
 
