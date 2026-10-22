@@ -4,6 +4,7 @@ import DataStructures.AuthData;
 import DataStructures.UserData;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
+
 import java.util.UUID;
 import java.util.ArrayList;
 
@@ -14,11 +15,12 @@ public class AdminService {
         this.database = database;
     }
 
-    public void authenticate(String authtoken) throws UnauthorizedException {
+    public String authenticate(String authtoken) throws UnauthorizedException {
         var token = database.getAuthData(authtoken);
         if (token == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
+        return token.getUsername();
     }
 
     public String createAuth(String username) {
@@ -53,9 +55,9 @@ public class AdminService {
 
     private String generateToken() {
         String token;
-        do{
+        do {
             token = UUID.randomUUID().toString();
-        }while(database.getAuthData(token)!=null);
+        } while (database.getAuthData(token) != null);
         return token;
     }
 }

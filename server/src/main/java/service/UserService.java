@@ -32,8 +32,7 @@ public class UserService {
         database.removeAuthData(authtoken);
     }
 
-    public void createGame(String authtoken) {
-        var username = getUsername(authtoken);
+    public void createGame(String username) {
         var gameID = makeGameID();
         //add game to userlist and database
         database.newGame(gameID);

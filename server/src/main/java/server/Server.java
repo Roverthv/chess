@@ -48,6 +48,20 @@ public class Server {
     }
 
     private void newGame(@NotNull Context ctx) {
+        var json = new Gson();
+        var authToken = ctx.header("Authorization");
+        try {
+            String username = Admin.authenticate(authToken);
+            Service.createGame(username);
+            ctx.status(200);
+            ctx.result();
+        } catch (UnauthorizedException e) {
+            ctx.status(401);
+            ctx.result(json.toJson(e));
+        } catch (RuntimeException e) {
+            ctx.status(500);
+            ctx.result(json.toJson(e));
+        }
     }
 
     private void login(@NotNull Context ctx) {
