@@ -34,7 +34,7 @@ public class Server {
         // Register your endpoints and exception handlers here.
         javalin.delete("/db", this::clear);
         javalin.delete("/session", this::logout);
-        javalin.post("/session/{username}/{password}", this::login);
+        javalin.post("/session", this::login);
         javalin.post("/user/", this::register);
         javalin.post("/game", this::newGame);
         javalin.put("/game", this::joinGame);
@@ -52,13 +52,14 @@ public class Server {
 
     private void login(@NotNull Context ctx) {
         var json = new Gson();
-        var username = ctx.pathParam("username");
-        var password = ctx.pathParam("password");
+        Map<String, String> body = ctx.bodyAsClass(Map.class);
+        var username = body.get("username");
+        var password = body.get("password");
         try {
             Service.login(username, password);
             var authToken = Admin.createAuth(username);
             var authdata = database.getAuthData(authToken);
-            ctx.header(json.toJson(authToken));
+            ctx.header("Authorization", authToken);
             ctx.status(200);
             ctx.result(json.toJson(authdata));
         } catch (DataAccessException e) {
@@ -74,6 +75,21 @@ public class Server {
     }
 
     private void logout(@NotNull Context ctx) {
+        var json = new Gson();
+        var authToken = ctx.header("Authorization");
+        try {
+            Admin.authenticate(authToken);
+            Service.logout(authToken);
+            ctx.removeHeader("Authorization");
+            ctx.status(200);
+            ctx.result();
+        } catch (UnauthorizedException e) {
+            ctx.status(401);
+            ctx.result(json.toJson(e));
+        } catch (RuntimeException e) {
+            ctx.status(500);
+            ctx.result(json.toJson(e));
+        }
     }
 
     private void register(@NotNull Context ctx) {
@@ -85,7 +101,7 @@ public class Server {
         try {
             var authToken = Admin.createUser(username, password, email);
             var authdata = database.getAuthData(authToken);
-            ctx.header(json.toJson(authToken));
+            ctx.header("Authorization", authToken);
             ctx.status(200);
             ctx.result(json.toJson(authdata));
         } catch (DataAccessException e) {
@@ -101,7 +117,7 @@ public class Server {
         var json = new Gson();
         try {
             Admin.clear();
-            ctx.header("");
+            ctx.removeHeader("Authorization");
             ctx.status(200);
             ctx.result();
         } catch (RuntimeException e) {

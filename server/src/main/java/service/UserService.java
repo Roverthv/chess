@@ -25,6 +25,7 @@ public class UserService {
     }
 
     public void logout(String authtoken) {
+        database.removeAuthData(authtoken);
     }
 
     public void createGame(String authtoken) {
