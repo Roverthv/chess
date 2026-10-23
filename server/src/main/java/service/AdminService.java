@@ -17,8 +17,8 @@ public class AdminService {
         this.database = database;
     }
 
-    public String authenticate(String authtoken) throws UnauthorizedException {
-        var token = database.getAuthData(authtoken);
+    public String authenticate(String authToken) throws UnauthorizedException {
+        var token = database.getAuthData(authToken);
         if (token == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
@@ -32,10 +32,6 @@ public class AdminService {
         return authToken;
     }
 
-    public void deleteAuth(String authtoken) {
-        database.removeAuthData(authtoken);
-    }
-
     public String createUser(String username, String password, String email) throws DataAccessException {
         var exists = database.getUser(username);
         if (exists != null) {
@@ -45,10 +41,6 @@ public class AdminService {
         database.register(newUser);
         return createAuth(username);
 
-    }
-
-    public void deleteUser(String authtoken, String username) {
-        database.removeUser(username);
     }
 
     public List<GameData> getAllGames() {

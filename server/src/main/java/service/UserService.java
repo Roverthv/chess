@@ -34,11 +34,7 @@ public class UserService {
     public void joinGame(String username, int id, String team) throws DataAccessException, BadRequestException {
         database.getGameData(id).setPlayer(username, team);
     }
-
-    private String getUsername(String authToken) {
-        return database.getAuthData(authToken).getUsername();
-    }
-
+    
     private int makeGameID() {
 
         int id;

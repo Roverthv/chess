@@ -8,9 +8,9 @@ public record UserData(String username, String password, String email, ArrayList
         return username;
     }
 
-    public String getEmail() {
-        return email;
-    }
+//    public String getEmail() {
+//        return email;
+//    }
 
     public boolean checkPassword(String passGiven) {
         return password.equals(passGiven);

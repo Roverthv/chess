@@ -34,6 +34,10 @@ class MemoryDataAccessTest {
         database.addAuthData(authdata);
     }
 
+    void createGame() {
+        database.newGame(1, "testGame");
+    }
+
     @Test
     void clear() {
         createUser();
@@ -108,14 +112,14 @@ class MemoryDataAccessTest {
     void newGame() {
         assertNull(database.getGameData(1));
         assertNull(database.getGame(1));
-        database.newGame(1, "testGame");
+        createGame();
         assertEquals(new GameData(1, "testGame"), database.getGameData(1));
         assertEquals(new ChessGame(), database.getGame(1));
     }
 
     @Test
     void removeGame() {
-        database.newGame(1, "testGame");
+        createGame();
         assertEquals(new GameData(1, "testGame"), database.getGameData(1));
         assertEquals(new ChessGame(), database.getGame(1));
         database.removeGame(1);
@@ -126,21 +130,21 @@ class MemoryDataAccessTest {
     @Test
     void getGameData() {
         GameData testData = new GameData(1, "testGame");
-        database.newGame(1, "testGame");
+        createGame();
         assertEquals(testData, database.getGameData(1));
     }
 
     @Test
     void getGame() {
         ChessGame testGame = new ChessGame();
-        database.newGame(1, "testGame");
+        createGame();
         assertEquals(testGame, database.getGame(1));
     }
 
     @Test
     void getGames() {
         Map<Integer, GameData> testGameList = Map.of(1, new GameData(1, "testGame"));
-        database.newGame(1, "testGame");
+        createGame();
         assertEquals(testGameList, database.getGames());
     }
 
