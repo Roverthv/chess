@@ -1,13 +1,9 @@
 package service;
 
-import DataStructures.GameData;
-import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 
-import java.util.Collection;
 import java.util.Random;
-import java.util.UUID;
 
 public class UserService {
     DataAccess database;
@@ -25,7 +21,6 @@ public class UserService {
         if (!user.checkPassword(password)) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        //return Adminservice.create;
     }
 
     public void logout(String authtoken) {
@@ -34,17 +29,12 @@ public class UserService {
 
     public int createGame(String username, String gamename) {
         var gameID = makeGameID();
-        //add game to userlist and database
-        database.newGame(gameID);
-        database.getGame(gameID).setGameName(gamename);
+        database.newGame(gameID, gamename);
         database.getUser(username).addGame(gameID);
         return gameID;
     }
 
     public void joinGame(String authtoken, String id) {
-    }
-
-    public /*Collection<String>*/ void listGames(String authtoken) {
     }
 
     private String getUsername(String authToken) {

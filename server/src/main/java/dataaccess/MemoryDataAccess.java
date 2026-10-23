@@ -11,7 +11,8 @@ import java.util.Map;
 public class MemoryDataAccess implements DataAccess {
     private final Map<String, UserData> users = new HashMap<>();
     private final Map<String, AuthData> authTokens = new HashMap<>();
-    private final Map<Integer, GameData> games = new HashMap<>();
+    private final Map<Integer, GameData> gameData = new HashMap<>();
+    private final Map<Integer, ChessGame> games = new HashMap<>();
 
     @Override
     public void clear() {
@@ -60,17 +61,29 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void newGame(int gameID) {
-        games.put(gameID, new GameData(new ChessGame()));
+    public void newGame(int gameID, String gameName) {
+        gameData.put(gameID, new GameData(gameID, gameName));
+        games.put(gameID, new ChessGame());
     }
 
     @Override
     public void removeGame(int gameID) {
+        gameData.remove(gameID);
         games.remove(gameID);
     }
 
     @Override
-    public GameData getGame(int gameID) {
+    public GameData getGameData(int gameID) {
+        return gameData.get(gameID);
+    }
+
+    @Override
+    public ChessGame getGame(int gameID) {
         return games.get(gameID);
+    }
+
+    @Override
+    public Map<Integer, GameData> getGames() {
+        return gameData;
     }
 }

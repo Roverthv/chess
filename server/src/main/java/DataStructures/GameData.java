@@ -6,36 +6,55 @@ import dataaccess.DataAccessException;
 import java.util.Objects;
 
 public class GameData {
-    private final ChessGame game;
+    private int gameID;
     private String BlackPlayer;
     private String WhitePlayer;
     private String GameName;
 
-    public GameData(ChessGame game){
-        this.game = game;
+    public GameData(int gameID, String gamename) {
+        this.GameName = gamename;
+        this.gameID = gameID;
     }
 
-    public void setGameName(String name){this.GameName = name;}
-    public String getGameName(){return GameName;}
+    public int getGameID() {
+        return gameID;
+    }
 
-    public void setPlayer(String username, ChessGame.TeamColor team) throws DataAccessException{
-        if (team == ChessGame.TeamColor.BLACK){
-            if (BlackPlayer == null){BlackPlayer = username;}
-            else{throw new DataAccessException("Team Already taken");}
+    public void setGameName(String name) {
+        this.GameName = name;
+    }
+
+    public String getGameName() {
+        return GameName;
+    }
+
+    public void setPlayer(String username, ChessGame.TeamColor team) throws DataAccessException {
+        if (team == ChessGame.TeamColor.BLACK) {
+            if (BlackPlayer == null) {
+                BlackPlayer = username;
+            } else {
+                throw new DataAccessException("Team Already taken");
+            }
         }
-        if (team == ChessGame.TeamColor.WHITE){
-            if (WhitePlayer == null){WhitePlayer = username;}
-            else{throw new DataAccessException("Team Already taken");}
+        if (team == ChessGame.TeamColor.WHITE) {
+            if (WhitePlayer == null) {
+                WhitePlayer = username;
+            } else {
+                throw new DataAccessException("Team Already taken");
+            }
         }
     }
 
-    public String getPlayer(ChessGame.TeamColor team){
-        if (team == ChessGame.TeamColor.BLACK){return BlackPlayer;}
-        if (team == ChessGame.TeamColor.WHITE){return WhitePlayer;}
-        else {throw new RuntimeException("Invalid Team");}
+    public String getPlayer(ChessGame.TeamColor team) {
+        if (team == ChessGame.TeamColor.BLACK) {
+            return BlackPlayer;
+        }
+        if (team == ChessGame.TeamColor.WHITE) {
+            return WhitePlayer;
+        } else {
+            throw new RuntimeException("Invalid Team");
+        }
     }
-
-    ChessGame getGame(){return game;}
 
     @Override
     public boolean equals(Object o) {
@@ -43,11 +62,11 @@ public class GameData {
             return false;
         }
         GameData gameData = (GameData) o;
-        return Objects.equals(game, gameData.game) && Objects.equals(BlackPlayer, gameData.BlackPlayer) && Objects.equals(WhitePlayer, gameData.WhitePlayer);
+        return gameID == gameData.gameID && Objects.equals(BlackPlayer, gameData.BlackPlayer) && Objects.equals(WhitePlayer, gameData.WhitePlayer) && Objects.equals(GameName, gameData.GameName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(game, BlackPlayer, WhitePlayer);
+        return Objects.hash(gameID, BlackPlayer, WhitePlayer, GameName);
     }
 }

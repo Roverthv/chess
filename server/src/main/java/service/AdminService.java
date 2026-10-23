@@ -1,10 +1,13 @@
 package service;
 
 import DataStructures.AuthData;
+import DataStructures.GameData;
 import DataStructures.UserData;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.ArrayList;
 
@@ -47,6 +50,10 @@ public class AdminService {
 
     public void deleteUser(String authtoken, String username) {
         database.removeUser(username);
+    }
+
+    public List<GameData> getAllGames() {
+        return new ArrayList<>(database.getGames().values());
     }
 
     public void clear() {

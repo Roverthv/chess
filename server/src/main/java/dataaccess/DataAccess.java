@@ -3,6 +3,9 @@ package dataaccess;
 import DataStructures.AuthData;
 import DataStructures.GameData;
 import DataStructures.UserData;
+import chess.ChessGame;
+
+import java.util.Map;
 
 public interface DataAccess {
 
@@ -24,9 +27,13 @@ public interface DataAccess {
 
     void removeGamefromUser(String username, int gameID);
 
-    void newGame(int gameID);
+    void newGame(int gameID, String gameName);
 
     void removeGame(int gameID);
 
-    GameData getGame(int gameID);
+    GameData getGameData(int gameID);
+
+    ChessGame getGame(int gameID);
+
+    Map<Integer, GameData> getGames();
 }

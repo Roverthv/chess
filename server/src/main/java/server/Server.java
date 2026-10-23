@@ -1,6 +1,8 @@
 package server;
 
+import DataStructures.GameData;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
@@ -12,6 +14,7 @@ import service.AdminService;
 import service.UnauthorizedException;
 import service.UserService;
 
+import java.util.List;
 import java.util.Map;
 
 public class Server {
@@ -42,7 +45,26 @@ public class Server {
     }
 
     private void getGames(@NotNull Context ctx) {
-
+        var json = new GsonBuilder()
+                .serializeNulls()
+                .create();
+        Map<String, String> error;
+        var authToken = ctx.header("Authorization");
+        try {
+            Admin.authenticate(authToken);
+            List<GameData> games = Admin.getAllGames();
+            ctx.status(200);
+            Map<String, List<GameData>> result = Map.of("games", games);
+            ctx.result(json.toJson(result));
+        } catch (UnauthorizedException e) {
+            ctx.status(401);
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
+        } catch (RuntimeException e) {
+            ctx.status(500);
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
+        }
     }
 
     private void joinGame(@NotNull Context ctx) {
@@ -51,6 +73,7 @@ public class Server {
 
     private void newGame(@NotNull Context ctx) {
         var json = new Gson();
+        Map<String, String> error;
         var authToken = ctx.header("Authorization");
         Map<String, String> body = ctx.bodyAsClass(Map.class);
         var gamename = body.get("gameName");
@@ -62,15 +85,18 @@ public class Server {
             ctx.result(json.toJson(result));
         } catch (UnauthorizedException e) {
             ctx.status(401);
-            ctx.result(json.toJson(e));
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
         } catch (RuntimeException e) {
             ctx.status(500);
-            ctx.result(json.toJson(e));
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
         }
     }
 
     private void login(@NotNull Context ctx) {
         var json = new Gson();
+        Map<String, String> error;
         Map<String, String> body = ctx.bodyAsClass(Map.class);
         var username = body.get("username");
         var password = body.get("password");
@@ -83,18 +109,22 @@ public class Server {
             ctx.result(json.toJson(authdata));
         } catch (DataAccessException e) {
             ctx.status(400);
-            ctx.result(json.toJson(e));
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
         } catch (UnauthorizedException e) {
             ctx.status(401);
-            ctx.result(json.toJson(e));
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
         } catch (RuntimeException e) {
             ctx.status(500);
-            ctx.result(json.toJson(e));
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
         }
     }
 
     private void logout(@NotNull Context ctx) {
         var json = new Gson();
+        Map<String, String> error;
         var authToken = ctx.header("Authorization");
         try {
             Admin.authenticate(authToken);
@@ -104,15 +134,18 @@ public class Server {
             ctx.result();
         } catch (UnauthorizedException e) {
             ctx.status(401);
-            ctx.result(json.toJson(e));
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
         } catch (RuntimeException e) {
             ctx.status(500);
-            ctx.result(json.toJson(e));
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
         }
     }
 
     private void register(@NotNull Context ctx) {
         var json = new Gson();
+        Map<String, String> error;
         Map<String, String> body = ctx.bodyAsClass(Map.class);
         var username = body.get("username");
         var password = body.get("password");
@@ -125,15 +158,18 @@ public class Server {
             ctx.result(json.toJson(authdata));
         } catch (DataAccessException e) {
             ctx.status(403);
-            ctx.result(json.toJson(e));
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
         } catch (RuntimeException e) {
             ctx.status(500);
-            ctx.result(json.toJson(e));
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
         }
     }
 
     private void clear(Context ctx) {
         var json = new Gson();
+        Map<String, String> error;
         try {
             Admin.clear();
             ctx.removeHeader("Authorization");
@@ -141,7 +177,8 @@ public class Server {
             ctx.result();
         } catch (RuntimeException e) {
             ctx.status(500);
-            ctx.result(json.toJson(e));
+            error = Map.of("Error", e.getMessage());
+            ctx.result(json.toJson(error));
         }
     }
 
