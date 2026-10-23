@@ -1,18 +1,18 @@
 package DataStructures;
 
-import chess.ChessGame;
 import dataaccess.DataAccessException;
+import service.BadRequestException;
 
 import java.util.Objects;
 
 public class GameData {
     private int gameID;
-    private String BlackPlayer;
-    private String WhitePlayer;
-    private String GameName;
+    private String blackUsername;
+    private String whiteUsername;
+    private String gameName;
 
     public GameData(int gameID, String gamename) {
-        this.GameName = gamename;
+        this.gameName = gamename;
         this.gameID = gameID;
     }
 
@@ -21,38 +21,49 @@ public class GameData {
     }
 
     public void setGameName(String name) {
-        this.GameName = name;
+        this.gameName = name;
     }
 
     public String getGameName() {
-        return GameName;
+        return gameName;
     }
 
-    public void setPlayer(String username, ChessGame.TeamColor team) throws DataAccessException {
-        if (team == ChessGame.TeamColor.BLACK) {
-            if (BlackPlayer == null) {
-                BlackPlayer = username;
+    public void setPlayer(String username, String team) throws DataAccessException, BadRequestException {
+        if (Objects.equals(team, "WHITE/BLACK")) {
+            if (whiteUsername == null) {
+                whiteUsername = username;
+            } else if (blackUsername == null) {
+                blackUsername = username;
             } else {
-                throw new DataAccessException("Team Already taken");
+                throw new DataAccessException("Error: already taken");
             }
         }
-        if (team == ChessGame.TeamColor.WHITE) {
-            if (WhitePlayer == null) {
-                WhitePlayer = username;
+        if (Objects.equals(team, "BLACK")) {
+            if (blackUsername == null) {
+                blackUsername = username;
             } else {
-                throw new DataAccessException("Team Already taken");
+                throw new DataAccessException("Error: already taken");
             }
         }
-    }
-
-    public String getPlayer(ChessGame.TeamColor team) {
-        if (team == ChessGame.TeamColor.BLACK) {
-            return BlackPlayer;
-        }
-        if (team == ChessGame.TeamColor.WHITE) {
-            return WhitePlayer;
+        if (Objects.equals(team, "WHITE")) {
+            if (whiteUsername == null) {
+                whiteUsername = username;
+            } else {
+                throw new DataAccessException("Error: already taken");
+            }
         } else {
-            throw new RuntimeException("Invalid Team");
+            throw new BadRequestException("Error: bad request");
+        }
+    }
+
+    public String getPlayer(String team) throws BadRequestException {
+        if (Objects.equals(team, "BLACK")) {
+            return blackUsername;
+        }
+        if (Objects.equals(team, "WHITE")) {
+            return whiteUsername;
+        } else {
+            throw new BadRequestException("Error: bad request");
         }
     }
 
@@ -62,11 +73,11 @@ public class GameData {
             return false;
         }
         GameData gameData = (GameData) o;
-        return gameID == gameData.gameID && Objects.equals(BlackPlayer, gameData.BlackPlayer) && Objects.equals(WhitePlayer, gameData.WhitePlayer) && Objects.equals(GameName, gameData.GameName);
+        return gameID == gameData.gameID && Objects.equals(blackUsername, gameData.blackUsername) && Objects.equals(whiteUsername, gameData.whiteUsername) && Objects.equals(gameName, gameData.gameName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gameID, BlackPlayer, WhitePlayer, GameName);
+        return Objects.hash(gameID, blackUsername, whiteUsername, gameName);
     }
 }

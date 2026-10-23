@@ -11,6 +11,7 @@ import io.javalin.http.Context;
 import io.javalin.json.JavalinGson;
 import org.jetbrains.annotations.NotNull;
 import service.AdminService;
+import service.BadRequestException;
 import service.UnauthorizedException;
 import service.UserService;
 
@@ -38,7 +39,7 @@ public class Server {
         javalin.delete("/db", this::clear);
         javalin.delete("/session", this::logout);
         javalin.post("/session", this::login);
-        javalin.post("/user/", this::register);
+        javalin.post("/user", this::register);
         javalin.post("/game", this::newGame);
         javalin.put("/game", this::joinGame);
         javalin.get("/game", this::getGames);
@@ -49,7 +50,7 @@ public class Server {
                 .serializeNulls()
                 .create();
         Map<String, String> error;
-        var authToken = ctx.header("Authorization");
+        var authToken = ctx.header("authorization");
         try {
             Admin.authenticate(authToken);
             List<GameData> games = Admin.getAllGames();
@@ -58,26 +59,56 @@ public class Server {
             ctx.result(json.toJson(result));
         } catch (UnauthorizedException e) {
             ctx.status(401);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         } catch (RuntimeException e) {
             ctx.status(500);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         }
     }
 
     private void joinGame(@NotNull Context ctx) {
+        var json = new Gson();
+        Map<String, String> error;
+        var authToken = ctx.header("authorization");
+        Map<String, Object> body = ctx.bodyAsClass(Map.class);
+        try {
+            checksforBadRequest(body, 2);
+            Double gameID = (Double) body.get("gameID");
+            String team = body.get("playerColor").toString();
+            String username = Admin.authenticate(authToken);
+            Service.joinGame(username, gameID.intValue(), team);
+            ctx.status(200);
+            ctx.result();
+        } catch (DataAccessException e) {
+            ctx.status(403);
+            error = Map.of("message", e.getMessage());
+            ctx.result(json.toJson(error));
+        } catch (UnauthorizedException e) {
+            ctx.status(401);
+            error = Map.of("message", e.getMessage());
+            ctx.result(json.toJson(error));
+        } catch (RuntimeException e) {
+            ctx.status(500);
+            error = Map.of("message", e.getMessage());
+            ctx.result(json.toJson(error));
+        } catch (BadRequestException e) {
+            ctx.status(400);
+            error = Map.of("message", e.getMessage());
+            ctx.result(json.toJson(error));
+        }
 
     }
 
     private void newGame(@NotNull Context ctx) {
         var json = new Gson();
         Map<String, String> error;
-        var authToken = ctx.header("Authorization");
+        var authToken = ctx.header("authorization");
         Map<String, String> body = ctx.bodyAsClass(Map.class);
         var gamename = body.get("gameName");
         try {
+            checkforBadRequest(body, 1);
             String username = Admin.authenticate(authToken);
             var gameID = Service.createGame(username, gamename);
             ctx.status(200);
@@ -85,11 +116,15 @@ public class Server {
             ctx.result(json.toJson(result));
         } catch (UnauthorizedException e) {
             ctx.status(401);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         } catch (RuntimeException e) {
             ctx.status(500);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
+            ctx.result(json.toJson(error));
+        } catch (BadRequestException e) {
+            ctx.status(400);
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         }
     }
@@ -101,23 +136,24 @@ public class Server {
         var username = body.get("username");
         var password = body.get("password");
         try {
+            checkforBadRequest(body, 2);
             Service.login(username, password);
             var authToken = Admin.createAuth(username);
             var authdata = database.getAuthData(authToken);
-            ctx.header("Authorization", authToken);
+            ctx.header("authorization", authToken);
             ctx.status(200);
             ctx.result(json.toJson(authdata));
-        } catch (DataAccessException e) {
+        } catch (BadRequestException e) {
             ctx.status(400);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         } catch (UnauthorizedException e) {
             ctx.status(401);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         } catch (RuntimeException e) {
             ctx.status(500);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         }
     }
@@ -125,20 +161,20 @@ public class Server {
     private void logout(@NotNull Context ctx) {
         var json = new Gson();
         Map<String, String> error;
-        var authToken = ctx.header("Authorization");
+        var authToken = ctx.header("authorization");
         try {
             Admin.authenticate(authToken);
             Service.logout(authToken);
-            ctx.removeHeader("Authorization");
+            ctx.removeHeader("authorization");
             ctx.status(200);
             ctx.result();
         } catch (UnauthorizedException e) {
             ctx.status(401);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         } catch (RuntimeException e) {
             ctx.status(500);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         }
     }
@@ -151,18 +187,23 @@ public class Server {
         var password = body.get("password");
         var email = body.get("email");
         try {
+            checkforBadRequest(body, 3);
             var authToken = Admin.createUser(username, password, email);
             var authdata = database.getAuthData(authToken);
-            ctx.header("Authorization", authToken);
+            ctx.header("authorization", authToken);
             ctx.status(200);
             ctx.result(json.toJson(authdata));
         } catch (DataAccessException e) {
             ctx.status(403);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         } catch (RuntimeException e) {
             ctx.status(500);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
+            ctx.result(json.toJson(error));
+        } catch (BadRequestException e) {
+            ctx.status(400);
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         }
     }
@@ -172,13 +213,35 @@ public class Server {
         Map<String, String> error;
         try {
             Admin.clear();
-            ctx.removeHeader("Authorization");
+            ctx.removeHeader("authorization");
             ctx.status(200);
             ctx.result();
         } catch (RuntimeException e) {
             ctx.status(500);
-            error = Map.of("Error", e.getMessage());
+            error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
+        }
+    }
+
+    private void checksforBadRequest(Map<String, Object> body, int numofExParam) throws BadRequestException {
+        if (body.size() != numofExParam) {
+            throw new BadRequestException("Error: bad request");
+        }
+        for (Object i : body.values()) {
+            if (i == null || i.toString().isEmpty()) {
+                throw new BadRequestException("Error: bad request");
+            }
+        }
+    }
+
+    private void checkforBadRequest(Map<String, String> body, int numofExParam) throws BadRequestException {
+        if (body.size() != numofExParam) {
+            throw new BadRequestException("Error: bad request");
+        }
+        for (String i : body.values()) {
+            if (i == null || i.isEmpty()) {
+                throw new BadRequestException("Error: bad request");
+            }
         }
     }
 

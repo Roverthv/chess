@@ -13,12 +13,9 @@ public class UserService {
     }
 
 
-    public void login(String username, String password) throws DataAccessException, UnauthorizedException {
+    public void login(String username, String password) throws UnauthorizedException, BadRequestException {
         var user = database.getUser(username);
-        if (user == null) {
-            throw new DataAccessException("Error: bad request");
-        }
-        if (!user.checkPassword(password)) {
+        if (user == null || !user.checkPassword(password)) {
             throw new UnauthorizedException("Error: unauthorized");
         }
     }
@@ -34,7 +31,8 @@ public class UserService {
         return gameID;
     }
 
-    public void joinGame(String authtoken, String id) {
+    public void joinGame(String username, int id, String team) throws DataAccessException, BadRequestException {
+        database.getGameData(id).setPlayer(username, team);
     }
 
     private String getUsername(String authToken) {
