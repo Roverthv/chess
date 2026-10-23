@@ -9,10 +9,14 @@ public class GameData {
     private final ChessGame game;
     private String BlackPlayer;
     private String WhitePlayer;
+    private String GameName;
 
     public GameData(ChessGame game){
         this.game = game;
     }
+
+    public void setGameName(String name){this.GameName = name;}
+    public String getGameName(){return GameName;}
 
     public void setPlayer(String username, ChessGame.TeamColor team) throws DataAccessException{
         if (team == ChessGame.TeamColor.BLACK){

@@ -38,23 +38,28 @@ public class Server {
         javalin.post("/user/", this::register);
         javalin.post("/game", this::newGame);
         javalin.put("/game", this::joinGame);
-        javalin.get("/game", this::getGame);
+        javalin.get("/game", this::getGames);
     }
 
-    private void getGame(@NotNull Context ctx) {
+    private void getGames(@NotNull Context ctx) {
+
     }
 
     private void joinGame(@NotNull Context ctx) {
+
     }
 
     private void newGame(@NotNull Context ctx) {
         var json = new Gson();
         var authToken = ctx.header("Authorization");
+        Map<String, String> body = ctx.bodyAsClass(Map.class);
+        var gamename = body.get("gameName");
         try {
             String username = Admin.authenticate(authToken);
-            Service.createGame(username);
+            var gameID = Service.createGame(username, gamename);
             ctx.status(200);
-            ctx.result();
+            Map<String, Integer> result = Map.of("gameID", gameID);
+            ctx.result(json.toJson(result));
         } catch (UnauthorizedException e) {
             ctx.status(401);
             ctx.result(json.toJson(e));

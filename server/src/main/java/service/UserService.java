@@ -32,11 +32,13 @@ public class UserService {
         database.removeAuthData(authtoken);
     }
 
-    public void createGame(String username) {
+    public int createGame(String username, String gamename) {
         var gameID = makeGameID();
         //add game to userlist and database
         database.newGame(gameID);
+        database.getGame(gameID).setGameName(gamename);
         database.getUser(username).addGame(gameID);
+        return gameID;
     }
 
     public void joinGame(String authtoken, String id) {
