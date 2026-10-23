@@ -25,7 +25,7 @@ public record UserData(String username, String password, String email, ArrayList
     }
 
     public void removeGame(int ID) {
-        gameIDs.remove(ID);
+        gameIDs.remove(Integer.valueOf(ID));
     }
 
     @Override

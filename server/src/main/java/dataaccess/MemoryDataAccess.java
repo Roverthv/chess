@@ -18,6 +18,8 @@ public class MemoryDataAccess implements DataAccess {
     public void clear() {
         users.clear();
         authTokens.clear();
+        gameData.clear();
+        games.clear();
     }
 
     @Override

@@ -2,9 +2,9 @@ package DataStructures;
 
 import java.util.Objects;
 
-public record AuthData(String username, String authtoken) {
+public record AuthData(String username, String authToken) {
     public String getAuthToken() {
-        return authtoken;
+        return authToken;
     }
 
     public String getUsername() {
@@ -17,11 +17,11 @@ public record AuthData(String username, String authtoken) {
             return false;
         }
         AuthData authData = (AuthData) o;
-        return Objects.equals(username, authData.username) && Objects.equals(authtoken, authData.authtoken);
+        return Objects.equals(username, authData.username) && Objects.equals(authToken, authData.authToken);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(authtoken, username);
+        return Objects.hash(authToken, username);
     }
 }
