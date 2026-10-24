@@ -64,8 +64,8 @@ public class ChessGame {
 
     private boolean moveInvalid(ChessMove move, TeamColor team) {
         ChessBoard testBoard = testMove(move);
-        ChessPosition KingSpot = testBoard.findKing(team);
-        return CheckmateRules.checkCheck(testBoard, KingSpot, team);
+        ChessPosition kingSpot = testBoard.findKing(team);
+        return CheckmateRules.checkCheck(testBoard, kingSpot, team);
     }
 
     /**
@@ -111,8 +111,8 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition KingSpot = getBoard().findKing(teamColor);
-        return CheckmateRules.checkCheck(getBoard(), KingSpot, teamColor);
+        ChessPosition kingSpot = getBoard().findKing(teamColor);
+        return CheckmateRules.checkCheck(getBoard(), kingSpot, teamColor);
         //throw new RuntimeException("Not implemented");
     }
 

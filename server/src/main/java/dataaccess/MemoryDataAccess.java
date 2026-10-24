@@ -58,11 +58,6 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void removeGameFromUser(String username, int gameID) {
-        users.get(username).removeGame(gameID);
-    }
-
-    @Override
     public void newGame(int gameID, String gameName) {
         gameData.put(gameID, new GameData(gameID, gameName));
         games.put(gameID, new ChessGame());

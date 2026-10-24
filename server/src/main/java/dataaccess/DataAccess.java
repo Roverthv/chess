@@ -25,8 +25,6 @@ public interface DataAccess {
 
     void addGameToUser(String username, int gameID);
 
-    void removeGameFromUser(String username, int gameID);
-
     void newGame(int gameID, String gameName);
 
     void removeGame(int gameID);

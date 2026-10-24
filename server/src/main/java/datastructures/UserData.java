@@ -8,10 +8,6 @@ public record UserData(String username, String password, String email, ArrayList
         return username;
     }
 
-//    public String getEmail() {
-//        return email;
-//    }
-
     public boolean checkPassword(String passGiven) {
         return password.equals(passGiven);
     }
@@ -20,12 +16,12 @@ public record UserData(String username, String password, String email, ArrayList
         return gameIDs;
     }
 
-    public void addGame(int ID) {
-        gameIDs.add(ID);
+    public void addGame(int gameID) {
+        gameIDs.add(gameID);
     }
 
-    public void removeGame(int ID) {
-        gameIDs.remove(Integer.valueOf(ID));
+    public void removeGame(int gameID) {
+        gameIDs.remove(Integer.valueOf(gameID));
     }
 
     @Override
@@ -34,7 +30,9 @@ public record UserData(String username, String password, String email, ArrayList
             return false;
         }
         UserData userData = (UserData) o;
-        return Objects.equals(username, userData.username) && Objects.equals(password, userData.password) && Objects.equals(gameIDs, userData.gameIDs);
+        return Objects.equals(username, userData.username) &&
+                Objects.equals(password, userData.password) &&
+                Objects.equals(gameIDs, userData.gameIDs);
     }
 
     @Override

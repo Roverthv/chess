@@ -21,15 +21,15 @@ import java.util.Map;
 public class Server {
 
     private final DataAccess database;
-    private final AdminService Admin;
-    private final UserService Service;
+    private final AdminService admin;
+    private final UserService service;
 
     private final Javalin javalin;
 
     public Server() {
         this.database = new MemoryDataAccess();
-        this.Admin = new AdminService(database);
-        this.Service = new UserService(database);
+        this.admin = new AdminService(database);
+        this.service = new UserService(database);
         javalin = Javalin.create(config -> {
             config.staticFiles.add("web");
             config.jsonMapper(new JavalinGson());
@@ -52,8 +52,8 @@ public class Server {
         Map<String, String> error;
         var authToken = ctx.header("authorization");
         try {
-            Admin.authenticate(authToken);
-            List<GameData> games = Admin.getAllGames();
+            admin.authenticate(authToken);
+            List<GameData> games = admin.getAllGames();
             ctx.status(200);
             Map<String, List<GameData>> result = Map.of("games", games);
             ctx.result(json.toJson(result));
@@ -77,8 +77,8 @@ public class Server {
             checksForBadRequest(body, 2);
             Double gameID = (Double) body.get("gameID");
             String team = body.get("playerColor").toString();
-            String username = Admin.authenticate(authToken);
-            Service.joinGame(username, gameID.intValue(), team);
+            String username = admin.authenticate(authToken);
+            service.joinGame(username, gameID.intValue(), team);
             ctx.status(200);
             ctx.result();
         } catch (DataAccessException e) {
@@ -109,8 +109,8 @@ public class Server {
         var gameName = body.get("gameName");
         try {
             checkForBadRequest(body, 1);
-            String username = Admin.authenticate(authToken);
-            var gameID = Service.createGame(username, gameName);
+            String username = admin.authenticate(authToken);
+            var gameID = service.createGame(username, gameName);
             ctx.status(200);
             Map<String, Integer> result = Map.of("gameID", gameID);
             ctx.result(json.toJson(result));
@@ -137,8 +137,8 @@ public class Server {
         var password = body.get("password");
         try {
             checkForBadRequest(body, 2);
-            Service.login(username, password);
-            var authToken = Admin.createAuth(username);
+            service.login(username, password);
+            var authToken = admin.createAuth(username);
             var authdata = database.getAuthData(authToken);
             ctx.header("authorization", authToken);
             ctx.status(200);
@@ -163,8 +163,8 @@ public class Server {
         Map<String, String> error;
         var authToken = ctx.header("authorization");
         try {
-            Admin.authenticate(authToken);
-            Service.logout(authToken);
+            admin.authenticate(authToken);
+            service.logout(authToken);
             ctx.removeHeader("authorization");
             ctx.status(200);
             ctx.result();
@@ -188,7 +188,7 @@ public class Server {
         var email = body.get("email");
         try {
             checkForBadRequest(body, 3);
-            var authToken = Admin.createUser(username, password, email);
+            var authToken = admin.createUser(username, password, email);
             var authdata = database.getAuthData(authToken);
             ctx.header("authorization", authToken);
             ctx.status(200);
@@ -212,7 +212,7 @@ public class Server {
         var json = new Gson();
         Map<String, String> error;
         try {
-            Admin.clear();
+            admin.clear();
             ctx.removeHeader("authorization");
             ctx.status(200);
             ctx.result();

@@ -50,7 +50,20 @@ public class MoveRules {
         return moves;
     }
 
-    private static List<ChessMove> evaluatePawnMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, Boolean hasMoved, int[][][] movementPatterns) {
+    private static void addPawnMoves(List<ChessMove> moves, int promoteRow,
+                                     ChessPosition myPosition, ChessPosition target) {
+        if (target.getRow() == promoteRow) {
+            moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.QUEEN));
+            moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.ROOK));
+            moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.BISHOP));
+            moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.KNIGHT));
+        } else {
+            moves.add(new ChessMove(myPosition, target, null));
+        }
+    }
+
+    private static List<ChessMove> evaluatePawnMoves(ChessBoard board, ChessPosition myPosition,
+                                                     ChessGame.TeamColor pieceColor, Boolean hasMoved, int[][][] movementPatterns) {
         List<ChessMove> moves = new ArrayList<>();
         int startRow = 7;
         int promoteRow = 1;
@@ -66,14 +79,7 @@ public class MoveRules {
             ChessPosition target = myPosition.addOffset(offset[0], offset[1]);
             var valid = board.isValidMove(target, pieceColor);
             if (valid[0] && !valid[1]) {
-                if (target.getRow() == promoteRow) {
-                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.QUEEN));
-                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.KNIGHT));
-                } else {
-                    moves.add(new ChessMove(myPosition, target, null));
-                }
+                addPawnMoves(moves, promoteRow, myPosition, target);
             } else {
                 break;
             }
@@ -82,20 +88,14 @@ public class MoveRules {
             ChessPosition target = myPosition.addOffset(offsets[0], offsets[1]);
             var valid = board.isValidMove(target, pieceColor);
             if (valid[0] && valid[1]) {
-                if (target.getRow() == promoteRow) {
-                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.QUEEN));
-                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.KNIGHT));
-                } else {
-                    moves.add(new ChessMove(myPosition, target, null));
-                }
+                addPawnMoves(moves, promoteRow, myPosition, target);
             }
         }
         return moves;
     }
 
-    public static List<ChessMove> findPawnMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, Boolean hasMoved) {
+    public static List<ChessMove> findPawnMoves(ChessBoard board, ChessPosition myPosition,
+                                                ChessGame.TeamColor pieceColor, Boolean hasMoved) {
         if (pieceColor == ChessGame.TeamColor.WHITE) {
             return evaluatePawnMoves(board, myPosition, pieceColor, hasMoved, PAWNPATTERNSWHITE);
         } else if (pieceColor == ChessGame.TeamColor.BLACK) {
@@ -105,7 +105,8 @@ public class MoveRules {
         }
     }
 
-    public static List<ChessMove> determineMoves(ChessBoard board, ChessPosition myPosition, ChessPiece.PieceType type, ChessGame.TeamColor pieceColor, Boolean hasMoved) {
+    public static List<ChessMove> determineMoves(ChessBoard board, ChessPosition myPosition,
+                                                 ChessPiece.PieceType type, ChessGame.TeamColor pieceColor, Boolean hasMoved) {
         List<ChessMove> moves;
         switch (type) {
             case ChessPiece.PieceType.KING -> moves = findMoves(board, myPosition, pieceColor, KINGPATTERNS);

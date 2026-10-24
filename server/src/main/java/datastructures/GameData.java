@@ -16,18 +16,6 @@ public class GameData {
         this.gameID = gameID;
     }
 
-//    public int getGameID() {
-//        return gameID;
-//    }
-//
-//    public void setGameName(String name) {
-//        this.gameName = name;
-//    }
-//
-//    public String getGameName() {
-//        return gameName;
-//    }
-
     public void setPlayer(String username, String team) throws DataAccessException, BadRequestException {
         switch (team) {
             case "WHITE/BLACK" -> {
@@ -57,24 +45,14 @@ public class GameData {
         }
     }
 
-//    public String getPlayer(String team) throws BadRequestException {
-//        if (Objects.equals(team, "BLACK")) {
-//            return blackUsername;
-//        }
-//        if (Objects.equals(team, "WHITE")) {
-//            return whiteUsername;
-//        } else {
-//            throw new BadRequestException("Error: bad request");
-//        }
-//    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
         GameData gameData = (GameData) o;
-        return gameID == gameData.gameID && Objects.equals(blackUsername, gameData.blackUsername) && Objects.equals(whiteUsername, gameData.whiteUsername) && Objects.equals(gameName, gameData.gameName);
+        return gameID == gameData.gameID && Objects.equals(blackUsername, gameData.blackUsername) &&
+                Objects.equals(whiteUsername, gameData.whiteUsername) && Objects.equals(gameName, gameData.gameName);
     }
 
     @Override
