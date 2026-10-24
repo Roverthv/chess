@@ -1,8 +1,8 @@
-package personal.dataAccess;
+package personal.dataaccess;
 
-import dataStructures.AuthData;
-import dataStructures.GameData;
-import dataStructures.UserData;
+import datastructures.AuthData;
+import datastructures.GameData;
+import datastructures.UserData;
 import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;

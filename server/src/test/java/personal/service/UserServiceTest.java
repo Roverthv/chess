@@ -1,8 +1,8 @@
 package personal.service;
 
-import dataStructures.AuthData;
-import dataStructures.GameData;
-import dataStructures.UserData;
+import datastructures.AuthData;
+import datastructures.GameData;
+import datastructures.UserData;
 import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
@@ -34,31 +34,31 @@ class UserServiceTest {
     }
 
     @Test
-    void TestLoginPass() {
+    void testLoginPass() {
         createUser();
         assertDoesNotThrow(() -> Service.login("test user", "test password"));
     }
 
     @Test
-    void TestLoginBadUsername() {
+    void testLoginBadUsername() {
         createUser();
         assertThrows(UnauthorizedException.class, () -> Service.login("", "test password"));
     }
 
     @Test
-    void TestLoginBadPassword() {
+    void testLoginBadPassword() {
         createUser();
         assertThrows(UnauthorizedException.class, () -> Service.login("test user", ""));
     }
 
     @Test
-    void TestLogoutPass() {
+    void testLogoutPass() {
         createAuth();
         assertDoesNotThrow(() -> Service.logout("testToken"));
     }
 
     @Test
-    void TestCreateGame() {
+    void testCreateGame() {
         createUser();
         int gameID = Service.createGame("test user", "test game");
         assertEquals(new GameData(gameID, "test game"), database.getGameData(gameID));
@@ -66,28 +66,28 @@ class UserServiceTest {
     }
 
     @Test
-    void TestJoinGameWhite() {
+    void testJoinGameWhite() {
         createUser();
         int gameID = Service.createGame("test user", "test game");
         assertDoesNotThrow(() -> Service.joinGame("test user", gameID, "WHITE"));
     }
 
     @Test
-    void TestJoinGameBlack() {
+    void testJoinGameBlack() {
         createUser();
         int gameID = Service.createGame("test user", "test game");
         assertDoesNotThrow(() -> Service.joinGame("test user", gameID, "BLACK"));
     }
 
     @Test
-    void TestJoinGameEither() {
+    void testJoinGameEither() {
         createUser();
         int gameID = Service.createGame("test user", "test game");
         assertDoesNotThrow(() -> Service.joinGame("test user", gameID, "WHITE/BLACK"));
     }
 
     @Test
-    void TestJoinGameWhiteTaken() {
+    void testJoinGameWhiteTaken() {
         createUser();
         int gameID = Service.createGame("test user", "test game");
         try {
@@ -99,7 +99,7 @@ class UserServiceTest {
     }
 
     @Test
-    void TestJoinGameBlackTaken() {
+    void testJoinGameBlackTaken() {
         createUser();
         int gameID = Service.createGame("test user", "test game");
         try {
@@ -111,7 +111,7 @@ class UserServiceTest {
     }
 
     @Test
-    void TestJoinGameFull() {
+    void testJoinGameFull() {
         createUser();
         int gameID = Service.createGame("test user", "test game");
         try {
@@ -124,7 +124,7 @@ class UserServiceTest {
     }
 
     @Test
-    void TestJoinGameInvalid() {
+    void testJoinGameInvalid() {
         createUser();
         int gameID = Service.createGame("test user", "test game");
         assertThrows(BadRequestException.class, () -> Service.joinGame("test user", gameID, "Green"));

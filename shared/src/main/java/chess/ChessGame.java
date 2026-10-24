@@ -1,6 +1,6 @@
 package chess;
 
-import chess.movementRules.CheckmateRules;
+import chess.movementrules.CheckmateRules;
 
 import java.util.Collection;
 import java.util.Objects;

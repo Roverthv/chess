@@ -1,4 +1,4 @@
-package dataStructures;
+package datastructures;
 
 import dataaccess.DataAccessException;
 import service.BadRequestException;

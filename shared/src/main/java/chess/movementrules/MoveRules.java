@@ -1,4 +1,4 @@
-package chess.movementRules;
+package chess.movementrules;
 
 import chess.*;
 
@@ -7,29 +7,29 @@ import java.util.List;
 
 public class MoveRules {
 
-    private static final int[][][] KingPatterns = {{{1, 0}}, {{-1, 0}},
+    private static final int[][][] KINGPATTERNS = {{{1, 0}}, {{-1, 0}},
             {{0, 1}}, {{0, -1}}, {{1, 1}}, {{1, -1}}, {{-1, 1}}, {{-1, -1}}};
 
-    private static final int[][][] QueenPatterns = {{{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}},
+    private static final int[][][] QUEENPATTERNS = {{{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}},
             {{-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7}}, {{-1, -1}, {-2, -2}, {-3, -3}, {-4, -4},
             {-5, -5}, {-6, -6}, {-7, -7}}, {{1, -1}, {2, -2}, {3, -3}, {4, -4}, {5, -5}, {6, -6}, {7, -7}}, {{1, 0},
             {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}}, {{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}},
             {{-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0}}, {{0, -1}, {0, -2}, {0, -3}, {0, -4},
             {0, -5}, {0, -6}, {0, -7}}};
 
-    private static final int[][][] BishopPatterns = {{{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}},
+    private static final int[][][] BISHOPPATTERNS = {{{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}},
             {{-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7}}, {{-1, -1}, {-2, -2}, {-3, -3}, {-4, -4},
             {-5, -5}, {-6, -6}, {-7, -7}}, {{1, -1}, {2, -2}, {3, -3}, {4, -4}, {5, -5}, {6, -6}, {7, -7}}};
 
-    private static final int[][][] RookPatterns = {{{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}},
+    private static final int[][][] ROOKPATTERNS = {{{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}},
             {{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}}, {{-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0},
             {-6, 0}, {-7, 0}}, {{0, -1}, {0, -2}, {0, -3}, {0, -4}, {0, -5}, {0, -6}, {0, -7}}};
 
-    private static final int[][][] KnightPatterns = {{{2, 1}}, {{2, -1}},
+    private static final int[][][] KNIGHTPATTERNS = {{{2, 1}}, {{2, -1}},
             {{-1, 2}}, {{-1, -2}}, {{-2, -1}}, {{-2, 1}}, {{1, -2}}, {{1, 2}}};
 
-    private static final int[][][] PawnPatternsWhite = {{{1, 0}, {2, 0}}, {{1, 1}, {1, -1}}};
-    private static final int[][][] PawnPatternsBlack = {{{-1, 0}, {-2, 0}}, {{-1, -1}, {-1, 1}}};
+    private static final int[][][] PAWNPATTERNSWHITE = {{{1, 0}, {2, 0}}, {{1, 1}, {1, -1}}};
+    private static final int[][][] PAWNPATTERNSBLACK = {{{-1, 0}, {-2, 0}}, {{-1, -1}, {-1, 1}}};
 
     public static List<ChessMove> findMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, int[][][] movementPatterns) {
         List<ChessMove> moves = new ArrayList<>();
@@ -97,9 +97,9 @@ public class MoveRules {
 
     public static List<ChessMove> findPawnMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, Boolean hasMoved) {
         if (pieceColor == ChessGame.TeamColor.WHITE) {
-            return evaluatePawnMoves(board, myPosition, pieceColor, hasMoved, PawnPatternsWhite);
+            return evaluatePawnMoves(board, myPosition, pieceColor, hasMoved, PAWNPATTERNSWHITE);
         } else if (pieceColor == ChessGame.TeamColor.BLACK) {
-            return evaluatePawnMoves(board, myPosition, pieceColor, hasMoved, PawnPatternsBlack);
+            return evaluatePawnMoves(board, myPosition, pieceColor, hasMoved, PAWNPATTERNSBLACK);
         } else {
             throw new RuntimeException("Not implemented");
         }
@@ -108,11 +108,11 @@ public class MoveRules {
     public static List<ChessMove> determineMoves(ChessBoard board, ChessPosition myPosition, ChessPiece.PieceType type, ChessGame.TeamColor pieceColor, Boolean hasMoved) {
         List<ChessMove> moves;
         switch (type) {
-            case ChessPiece.PieceType.KING -> moves = findMoves(board, myPosition, pieceColor, KingPatterns);
-            case ChessPiece.PieceType.QUEEN -> moves = findMoves(board, myPosition, pieceColor, QueenPatterns);
-            case ChessPiece.PieceType.BISHOP -> moves = findMoves(board, myPosition, pieceColor, BishopPatterns);
-            case ChessPiece.PieceType.KNIGHT -> moves = findMoves(board, myPosition, pieceColor, KnightPatterns);
-            case ChessPiece.PieceType.ROOK -> moves = findMoves(board, myPosition, pieceColor, RookPatterns);
+            case ChessPiece.PieceType.KING -> moves = findMoves(board, myPosition, pieceColor, KINGPATTERNS);
+            case ChessPiece.PieceType.QUEEN -> moves = findMoves(board, myPosition, pieceColor, QUEENPATTERNS);
+            case ChessPiece.PieceType.BISHOP -> moves = findMoves(board, myPosition, pieceColor, BISHOPPATTERNS);
+            case ChessPiece.PieceType.KNIGHT -> moves = findMoves(board, myPosition, pieceColor, KNIGHTPATTERNS);
+            case ChessPiece.PieceType.ROOK -> moves = findMoves(board, myPosition, pieceColor, ROOKPATTERNS);
             case ChessPiece.PieceType.PAWN -> moves = findPawnMoves(board, myPosition, pieceColor, hasMoved);
             default -> throw new IllegalStateException("Unexpected value: " + type);
         }
@@ -122,19 +122,19 @@ public class MoveRules {
     public static int[][][] getPatterns(ChessPiece.PieceType type) {
         switch (type) {
             case KING -> {
-                return KingPatterns;
+                return KINGPATTERNS;
             }
             case QUEEN -> {
-                return QueenPatterns;
+                return QUEENPATTERNS;
             }
             case KNIGHT -> {
-                return KnightPatterns;
+                return KNIGHTPATTERNS;
             }
             case ROOK -> {
-                return RookPatterns;
+                return ROOKPATTERNS;
             }
             case BISHOP -> {
-                return BishopPatterns;
+                return BISHOPPATTERNS;
             }
             default -> throw new IllegalStateException("Unexpected value: " + type);
         }
@@ -143,10 +143,10 @@ public class MoveRules {
     public static int[][][] getPawnPatterns(ChessGame.TeamColor color) {
         switch (color) {
             case WHITE -> {
-                return PawnPatternsWhite;
+                return PAWNPATTERNSWHITE;
             }
             case BLACK -> {
-                return PawnPatternsBlack;
+                return PAWNPATTERNSBLACK;
             }
             default -> throw new IllegalStateException("Unexpected value: " + color);
         }

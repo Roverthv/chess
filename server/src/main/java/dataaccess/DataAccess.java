@@ -1,8 +1,8 @@
 package dataaccess;
 
-import dataStructures.AuthData;
-import dataStructures.GameData;
-import dataStructures.UserData;
+import datastructures.AuthData;
+import datastructures.GameData;
+import datastructures.UserData;
 import chess.ChessGame;
 
 import java.util.Map;

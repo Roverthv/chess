@@ -1,8 +1,8 @@
 package service;
 
-import dataStructures.AuthData;
-import dataStructures.GameData;
-import dataStructures.UserData;
+import datastructures.AuthData;
+import datastructures.GameData;
+import datastructures.UserData;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 

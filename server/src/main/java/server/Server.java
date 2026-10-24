@@ -1,6 +1,6 @@
 package server;
 
-import dataStructures.GameData;
+import datastructures.GameData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccess;
