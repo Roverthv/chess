@@ -1,4 +1,4 @@
-package DataStructures;
+package dataStructures;
 
 import dataaccess.DataAccessException;
 import service.BadRequestException;
@@ -11,8 +11,8 @@ public class GameData {
     private String whiteUsername;
     private final String gameName;
 
-    public GameData(int gameID, String gamename) {
-        this.gameName = gamename;
+    public GameData(int gameID, String gameName) {
+        this.gameName = gameName;
         this.gameID = gameID;
     }
 

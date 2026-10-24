@@ -1,4 +1,4 @@
-package chess.MovementRules;
+package chess.movementRules;
 
 import chess.*;
 
@@ -28,8 +28,8 @@ public class MoveRules {
     private static final int[][][] KnightPatterns = {{{2, 1}}, {{2, -1}},
             {{-1, 2}}, {{-1, -2}}, {{-2, -1}}, {{-2, 1}}, {{1, -2}}, {{1, 2}}};
 
-    private static final int[][][] PawnPatternsWhite = {{{1,0}, {2,0}},{{1,1},{1,-1}}};
-    private static final int[][][] PawnPatternsBlack = {{{-1,0}, {-2,0}},{{-1,-1},{-1,1}}};
+    private static final int[][][] PawnPatternsWhite = {{{1, 0}, {2, 0}}, {{1, 1}, {1, -1}}};
+    private static final int[][][] PawnPatternsBlack = {{{-1, 0}, {-2, 0}}, {{-1, -1}, {-1, 1}}};
 
     public static List<ChessMove> findMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, int[][][] movementPatterns) {
         List<ChessMove> moves = new ArrayList<>();
@@ -39,12 +39,10 @@ public class MoveRules {
                 var valid = board.isValidMove(target, pieceColor);
                 if (valid[0] && !valid[1]) {
                     moves.add(new ChessMove(myPosition, target, null));
-                }
-                else if(valid[0] && valid[1]){
+                } else if (valid[0] && valid[1]) {
                     moves.add(new ChessMove(myPosition, target, null));
                     break;
-                }
-                else{
+                } else {
                     break;
                 }
             }
@@ -52,47 +50,44 @@ public class MoveRules {
         return moves;
     }
 
-    private static List<ChessMove> evaluatePawnMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, Boolean hasMoved, int[][][] movementPatterns){
+    private static List<ChessMove> evaluatePawnMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, Boolean hasMoved, int[][][] movementPatterns) {
         List<ChessMove> moves = new ArrayList<>();
         int startRow = 7;
         int promoteRow = 1;
-        if (pieceColor == ChessGame.TeamColor.WHITE){
+        if (pieceColor == ChessGame.TeamColor.WHITE) {
             startRow = 2;
             promoteRow = 8;
         }
-        for (int i = 0; i < 2; i++){
+        for (int i = 0; i < 2; i++) {
             int[] offset = movementPatterns[0][i];
-            if (i == 1 && (hasMoved || myPosition.getRow() != startRow)){
+            if (i == 1 && (hasMoved || myPosition.getRow() != startRow)) {
                 break;
             }
             ChessPosition target = myPosition.addOffset(offset[0], offset[1]);
             var valid = board.isValidMove(target, pieceColor);
             if (valid[0] && !valid[1]) {
-                if (target.getRow() == promoteRow){
+                if (target.getRow() == promoteRow) {
                     moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.QUEEN));
                     moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.ROOK));
                     moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.BISHOP));
                     moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.KNIGHT));
-                }
-                else {
+                } else {
                     moves.add(new ChessMove(myPosition, target, null));
                 }
-            }
-            else {
+            } else {
                 break;
             }
         }
         for (int[] offsets : movementPatterns[1]) {
             ChessPosition target = myPosition.addOffset(offsets[0], offsets[1]);
             var valid = board.isValidMove(target, pieceColor);
-            if(valid[0] && valid[1]){
-                if (target.getRow() == promoteRow){
+            if (valid[0] && valid[1]) {
+                if (target.getRow() == promoteRow) {
                     moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.QUEEN));
                     moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.ROOK));
                     moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.BISHOP));
                     moves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.KNIGHT));
-                }
-                else {
+                } else {
                     moves.add(new ChessMove(myPosition, target, null));
                 }
             }
@@ -101,20 +96,18 @@ public class MoveRules {
     }
 
     public static List<ChessMove> findPawnMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, Boolean hasMoved) {
-        if (pieceColor == ChessGame.TeamColor.WHITE){
+        if (pieceColor == ChessGame.TeamColor.WHITE) {
             return evaluatePawnMoves(board, myPosition, pieceColor, hasMoved, PawnPatternsWhite);
-        }
-        else if (pieceColor == ChessGame.TeamColor.BLACK) {
+        } else if (pieceColor == ChessGame.TeamColor.BLACK) {
             return evaluatePawnMoves(board, myPosition, pieceColor, hasMoved, PawnPatternsBlack);
-        }
-        else {
+        } else {
             throw new RuntimeException("Not implemented");
         }
     }
 
-    public static List<ChessMove> determineMoves(ChessBoard board, ChessPosition myPosition, ChessPiece.PieceType type, ChessGame.TeamColor pieceColor, Boolean hasMoved){
+    public static List<ChessMove> determineMoves(ChessBoard board, ChessPosition myPosition, ChessPiece.PieceType type, ChessGame.TeamColor pieceColor, Boolean hasMoved) {
         List<ChessMove> moves;
-        switch(type) {
+        switch (type) {
             case ChessPiece.PieceType.KING -> moves = findMoves(board, myPosition, pieceColor, KingPatterns);
             case ChessPiece.PieceType.QUEEN -> moves = findMoves(board, myPosition, pieceColor, QueenPatterns);
             case ChessPiece.PieceType.BISHOP -> moves = findMoves(board, myPosition, pieceColor, BishopPatterns);
@@ -126,20 +119,35 @@ public class MoveRules {
         return moves;
     }
 
-    public static int[][][] getPatterns(ChessPiece.PieceType type){
-        switch (type){
-            case KING -> {return KingPatterns;}
-            case QUEEN -> {return QueenPatterns;}
-            case KNIGHT -> {return KnightPatterns;}
-            case ROOK -> {return RookPatterns;}
-            case BISHOP -> {return BishopPatterns;}
+    public static int[][][] getPatterns(ChessPiece.PieceType type) {
+        switch (type) {
+            case KING -> {
+                return KingPatterns;
+            }
+            case QUEEN -> {
+                return QueenPatterns;
+            }
+            case KNIGHT -> {
+                return KnightPatterns;
+            }
+            case ROOK -> {
+                return RookPatterns;
+            }
+            case BISHOP -> {
+                return BishopPatterns;
+            }
             default -> throw new IllegalStateException("Unexpected value: " + type);
         }
     }
-    public static int[][][] getPawnPatterns(ChessGame.TeamColor color){
-        switch (color){
-            case WHITE -> {return PawnPatternsWhite;}
-            case BLACK -> {return PawnPatternsBlack;}
+
+    public static int[][][] getPawnPatterns(ChessGame.TeamColor color) {
+        switch (color) {
+            case WHITE -> {
+                return PawnPatternsWhite;
+            }
+            case BLACK -> {
+                return PawnPatternsBlack;
+            }
             default -> throw new IllegalStateException("Unexpected value: " + color);
         }
     }

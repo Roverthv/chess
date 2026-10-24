@@ -1,6 +1,6 @@
 package server;
 
-import DataStructures.GameData;
+import dataStructures.GameData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccess;
@@ -74,7 +74,7 @@ public class Server {
         var authToken = ctx.header("authorization");
         Map<String, Object> body = ctx.bodyAsClass(Map.class);
         try {
-            checksforBadRequest(body, 2);
+            checksForBadRequest(body, 2);
             Double gameID = (Double) body.get("gameID");
             String team = body.get("playerColor").toString();
             String username = Admin.authenticate(authToken);
@@ -106,11 +106,11 @@ public class Server {
         Map<String, String> error;
         var authToken = ctx.header("authorization");
         Map<String, String> body = ctx.bodyAsClass(Map.class);
-        var gamename = body.get("gameName");
+        var gameName = body.get("gameName");
         try {
-            checkforBadRequest(body, 1);
+            checkForBadRequest(body, 1);
             String username = Admin.authenticate(authToken);
-            var gameID = Service.createGame(username, gamename);
+            var gameID = Service.createGame(username, gameName);
             ctx.status(200);
             Map<String, Integer> result = Map.of("gameID", gameID);
             ctx.result(json.toJson(result));
@@ -136,7 +136,7 @@ public class Server {
         var username = body.get("username");
         var password = body.get("password");
         try {
-            checkforBadRequest(body, 2);
+            checkForBadRequest(body, 2);
             Service.login(username, password);
             var authToken = Admin.createAuth(username);
             var authdata = database.getAuthData(authToken);
@@ -187,7 +187,7 @@ public class Server {
         var password = body.get("password");
         var email = body.get("email");
         try {
-            checkforBadRequest(body, 3);
+            checkForBadRequest(body, 3);
             var authToken = Admin.createUser(username, password, email);
             var authdata = database.getAuthData(authToken);
             ctx.header("authorization", authToken);
@@ -223,8 +223,8 @@ public class Server {
         }
     }
 
-    private void checksforBadRequest(Map<String, Object> body, int numofExParam) throws BadRequestException {
-        if (body.size() != numofExParam) {
+    private void checksForBadRequest(Map<String, Object> body, int numOfExParam) throws BadRequestException {
+        if (body.size() != numOfExParam) {
             throw new BadRequestException("Error: bad request");
         }
         for (Object i : body.values()) {
@@ -234,8 +234,8 @@ public class Server {
         }
     }
 
-    private void checkforBadRequest(Map<String, String> body, int numofExParam) throws BadRequestException {
-        if (body.size() != numofExParam) {
+    private void checkForBadRequest(Map<String, String> body, int numOfExParam) throws BadRequestException {
+        if (body.size() != numOfExParam) {
             throw new BadRequestException("Error: bad request");
         }
         for (String i : body.values()) {

@@ -1,8 +1,8 @@
 package dataaccess;
 
-import DataStructures.AuthData;
-import DataStructures.GameData;
-import DataStructures.UserData;
+import dataStructures.AuthData;
+import dataStructures.GameData;
+import dataStructures.UserData;
 import chess.ChessGame;
 
 import java.util.HashMap;
@@ -53,12 +53,12 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void addGametoUser(String username, int gameID) {
+    public void addGameToUser(String username, int gameID) {
         users.get(username).addGame(gameID);
     }
 
     @Override
-    public void removeGamefromUser(String username, int gameID) {
+    public void removeGameFromUser(String username, int gameID) {
         users.get(username).removeGame(gameID);
     }
 

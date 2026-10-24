@@ -1,4 +1,4 @@
-package chess.MovementRules;
+package chess.movementRules;
 
 import chess.*;
 
@@ -6,66 +6,67 @@ import java.util.Objects;
 
 public class CheckmateRules {
 
-    public static boolean checkCheck(ChessBoard board, ChessPosition position, ChessGame.TeamColor team){
+    public static boolean checkCheck(ChessBoard board, ChessPosition position, ChessGame.TeamColor team) {
         return checkLines(board, position, team, "Straight") ||
                 checkLines(board, position, team, "Diagonal") ||
                 checkKnightsAndKing(board, position, team) ||
                 checkPawns(board, position, team);
     }
 
-    private static boolean checkLines(ChessBoard board, ChessPosition position, ChessGame.TeamColor team, String direction){
+    private static boolean checkLines(ChessBoard board, ChessPosition position, ChessGame.TeamColor team, String direction) {
         ChessPiece.PieceType threat;
         int[][][] movementPatterns;
-        if(Objects.equals(direction, "Straight")){
+        if (Objects.equals(direction, "Straight")) {
             threat = ChessPiece.PieceType.ROOK;
             movementPatterns = MoveRules.getPatterns(ChessPiece.PieceType.ROOK);
-        }
-        else if (Objects.equals(direction, "Diagonal")){
+        } else if (Objects.equals(direction, "Diagonal")) {
             threat = ChessPiece.PieceType.BISHOP;
             movementPatterns = MoveRules.getPatterns(ChessPiece.PieceType.BISHOP);
+        } else {
+            throw new IllegalStateException("Unexpected value: " + direction);
         }
-        else{throw new IllegalStateException("Unexpected value: " + direction);}
         ChessPiece.PieceType[] threats = {ChessPiece.PieceType.QUEEN, threat};
 
         return checkPattern(board, position, team, movementPatterns, threats);
     }
 
 
-    private static boolean checkKnightsAndKing(ChessBoard board, ChessPosition position, ChessGame.TeamColor team){
+    private static boolean checkKnightsAndKing(ChessBoard board, ChessPosition position, ChessGame.TeamColor team) {
         boolean inCheck;
         int[][][] movementPatterns = MoveRules.getPatterns(ChessPiece.PieceType.KING);
-        ChessPiece.PieceType[] threats ={ChessPiece.PieceType.KING};
-        inCheck = checkPattern(board, position,team, movementPatterns, threats);
-        if(inCheck){
+        ChessPiece.PieceType[] threats = {ChessPiece.PieceType.KING};
+        inCheck = checkPattern(board, position, team, movementPatterns, threats);
+        if (inCheck) {
             return inCheck;
-        }
-        else{
+        } else {
             movementPatterns = MoveRules.getPatterns(ChessPiece.PieceType.KNIGHT);
             threats[0] = ChessPiece.PieceType.KNIGHT;
-            return checkPattern(board, position,team, movementPatterns, threats);
+            return checkPattern(board, position, team, movementPatterns, threats);
         }
     }
 
-    private static boolean checkPawns(ChessBoard board, ChessPosition position, ChessGame.TeamColor team){
-        int[][][] movementPatterns = {{{},{}}};
+    private static boolean checkPawns(ChessBoard board, ChessPosition position, ChessGame.TeamColor team) {
+        int[][][] movementPatterns = {{{}, {}}};
         movementPatterns[0][0] = MoveRules.getPawnPatterns(team)[1][0];
         movementPatterns[0][1] = MoveRules.getPawnPatterns(team)[1][1];
         ChessPiece.PieceType[] threats = {ChessPiece.PieceType.PAWN};
         return checkPattern(board, position, team, movementPatterns, threats);
     }
 
-    private static boolean checkPattern(ChessBoard board, ChessPosition position, ChessGame.TeamColor team, int[][][] movementPatterns, ChessPiece.PieceType[] threats){
-        for(int[][] pattern : movementPatterns){
-            for(int[] offset : pattern){
+    private static boolean checkPattern(ChessBoard board, ChessPosition position, ChessGame.TeamColor team, int[][][] movementPatterns, ChessPiece.PieceType[] threats) {
+        for (int[][] pattern : movementPatterns) {
+            for (int[] offset : pattern) {
                 ChessPosition attack = position.addOffset(offset[0], offset[1]);
-                if(attack.getRow() < 1 || attack.getRow() > 8 || attack.getColumn() < 1 ||attack.getColumn() > 8){break;}
+                if (attack.getRow() < 1 || attack.getRow() > 8 || attack.getColumn() < 1 || attack.getColumn() > 8) {
+                    break;
+                }
                 ChessPiece attacker = board.getPiece(attack);
-                if(attacker != null){
-                    if (attacker.getTeamColor() == team){
+                if (attacker != null) {
+                    if (attacker.getTeamColor() == team) {
                         break;
                     }
-                    for (ChessPiece.PieceType threat : threats){
-                        if (attacker.getPieceType() == threat){
+                    for (ChessPiece.PieceType threat : threats) {
+                        if (attacker.getPieceType() == threat) {
                             return true;
                         }
                     }

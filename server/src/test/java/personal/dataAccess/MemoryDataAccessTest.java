@@ -1,8 +1,8 @@
-package Personal.DataAccess;
+package personal.dataAccess;
 
-import DataStructures.AuthData;
-import DataStructures.GameData;
-import DataStructures.UserData;
+import dataStructures.AuthData;
+import dataStructures.GameData;
+import dataStructures.UserData;
 import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
@@ -91,7 +91,7 @@ class MemoryDataAccessTest {
     }
 
     @Test
-    void addGametoUser() {
+    void addGameToUser() {
         createUser();
         assertFalse(database.getUser("test user").getGameList().contains(1));
         database.getUser("test user").addGame(1);
@@ -99,7 +99,7 @@ class MemoryDataAccessTest {
     }
 
     @Test
-    void removeGamefromUser() {
+    void removeGameFromUser() {
         createUser();
         database.getUser("test user").addGame(1);
         assertTrue(database.getUser("test user").getGameList().contains(1));

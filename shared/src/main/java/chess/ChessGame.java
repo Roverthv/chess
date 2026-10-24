@@ -1,6 +1,6 @@
 package chess;
 
-import chess.MovementRules.CheckmateRules;
+import chess.movementRules.CheckmateRules;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -14,6 +14,7 @@ import java.util.Objects;
 public class ChessGame {
     TeamColor turn;
     ChessBoard gameboard;
+
     public ChessGame() {
         gameboard = new ChessBoard();
         gameboard.resetBoard();
@@ -53,7 +54,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece toMove = getBoard().getPiece(startPosition);
-        if (toMove == null){ // || toMove.getTeamColor() != getTeamTurn()){
+        if (toMove == null) { // || toMove.getTeamColor() != getTeamTurn()){
             return null;
         }
         Collection<ChessMove> moves = toMove.pieceMoves(getBoard(), startPosition);
@@ -61,7 +62,7 @@ public class ChessGame {
         return moves;
     }
 
-    private boolean moveInvalid(ChessMove move, TeamColor team){
+    private boolean moveInvalid(ChessMove move, TeamColor team) {
         ChessBoard testBoard = testMove(move);
         ChessPosition KingSpot = testBoard.findKing(team);
         return CheckmateRules.checkCheck(testBoard, KingSpot, team);
@@ -75,29 +76,28 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece pieceToMove = getBoard().getPiece(move.getStartPosition());
-        if(pieceToMove == null || pieceToMove.getTeamColor() != getTeamTurn() || !validMoves(move.getStartPosition()).contains(move)){
+        if (pieceToMove == null || pieceToMove.getTeamColor() != getTeamTurn() || !validMoves(move.getStartPosition()).contains(move)) {
             throw new InvalidMoveException("Illegal Move Detected");
         }
         getBoard().addPiece(move.getEndPosition(), pieceToMove);
-        if(move.getPromotionPiece() != null){
+        if (move.getPromotionPiece() != null) {
             getBoard().getPiece(move.getEndPosition()).promote(move.getPromotionPiece());
         }
         getBoard().removePiece(move.getStartPosition());
 
-        if(getTeamTurn() == TeamColor.WHITE){
+        if (getTeamTurn() == TeamColor.WHITE) {
             setTeamTurn(TeamColor.BLACK);
-        } else if (getTeamTurn() == TeamColor.BLACK){
+        } else if (getTeamTurn() == TeamColor.BLACK) {
             setTeamTurn(TeamColor.WHITE);
-        }
-        else{
+        } else {
             throw new IllegalStateException("Unexpected value: " + getTeamTurn());
         }
     }
 
-    private ChessBoard testMove(ChessMove move){
+    private ChessBoard testMove(ChessMove move) {
         ChessBoard testBoard = new ChessBoard(getBoard());
         testBoard.addPiece(move.getEndPosition(), testBoard.getPiece(move.getStartPosition()));
-        if(move.getPromotionPiece() != null){
+        if (move.getPromotionPiece() != null) {
             testBoard.getPiece(move.getEndPosition()).promote(move.getPromotionPiece());
         }
         testBoard.removePiece(move.getStartPosition());
@@ -137,9 +137,9 @@ public class ChessGame {
         return !isInCheck(teamColor) && !hasValidMoves(teamColor);
     }
 
-    private boolean hasValidMoves(TeamColor teamColor){
-        for(ChessPosition position: getBoard().findTeamPositions(teamColor)){
-            if(!validMoves(position).isEmpty()){
+    private boolean hasValidMoves(TeamColor teamColor) {
+        for (ChessPosition position : getBoard().findTeamPositions(teamColor)) {
+            if (!validMoves(position).isEmpty()) {
                 return true;
             }
         }

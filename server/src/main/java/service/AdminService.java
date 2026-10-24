@@ -1,8 +1,8 @@
 package service;
 
-import DataStructures.AuthData;
-import DataStructures.GameData;
-import DataStructures.UserData;
+import dataStructures.AuthData;
+import dataStructures.GameData;
+import dataStructures.UserData;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 
@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.ArrayList;
 
 public class AdminService {
-    DataAccess database;
+    final DataAccess database;
 
     public AdminService(DataAccess database) {
         this.database = database;
@@ -37,7 +37,7 @@ public class AdminService {
         if (exists != null) {
             throw new DataAccessException("Error: already taken");
         }
-        UserData newUser = new UserData(username, password, email, new ArrayList<Integer>());
+        UserData newUser = new UserData(username, password, email, new ArrayList<>());
         database.register(newUser);
         return createAuth(username);
 

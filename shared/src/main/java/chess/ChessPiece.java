@@ -1,6 +1,6 @@
 package chess;
 
-import chess.MovementRules.MoveRules;
+import chess.movementRules.MoveRules;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +24,7 @@ public class ChessPiece {
         hasMoved = false;
     }
 
-    public ChessPiece(ChessPiece toCopy){
+    public ChessPiece(ChessPiece toCopy) {
         this.pieceColor = toCopy.pieceColor;
         this.type = toCopy.type;
         this.hasMoved = toCopy.hasMoved;
@@ -56,7 +56,9 @@ public class ChessPiece {
         return type;
     }
 
-    public boolean getHasMoved(){ return hasMoved;}
+    public boolean getHasMoved() {
+        return hasMoved;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -73,12 +75,12 @@ public class ChessPiece {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format("%s %s", getTeamColor().toString(), getPieceType().toString());
     }
 
-    public void promote(PieceType promotion){
-        if(type != PieceType.PAWN){
+    public void promote(PieceType promotion) {
+        if (type != PieceType.PAWN) {
             throw new RuntimeException("Not Implemented");
         }
         type = promotion;

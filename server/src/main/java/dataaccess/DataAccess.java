@@ -1,8 +1,8 @@
 package dataaccess;
 
-import DataStructures.AuthData;
-import DataStructures.GameData;
-import DataStructures.UserData;
+import dataStructures.AuthData;
+import dataStructures.GameData;
+import dataStructures.UserData;
 import chess.ChessGame;
 
 import java.util.Map;
@@ -23,9 +23,9 @@ public interface DataAccess {
 
     void removeAuthData(String authToken);
 
-    void addGametoUser(String username, int gameID);
+    void addGameToUser(String username, int gameID);
 
-    void removeGamefromUser(String username, int gameID);
+    void removeGameFromUser(String username, int gameID);
 
     void newGame(int gameID, String gameName);
 
