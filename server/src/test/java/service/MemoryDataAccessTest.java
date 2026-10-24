@@ -1,4 +1,4 @@
-package personal.dataaccess;
+package service;
 
 import datastructures.AuthData;
 import datastructures.GameData;

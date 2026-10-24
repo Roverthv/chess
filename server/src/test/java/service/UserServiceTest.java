@@ -1,4 +1,4 @@
-package personal.service;
+package service;
 
 import datastructures.AuthData;
 import datastructures.GameData;
@@ -10,9 +10,7 @@ import dataaccess.MemoryDataAccess;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.BadRequestException;
-import service.UnauthorizedException;
-import service.UserService;
+
 
 import java.util.ArrayList;
 
