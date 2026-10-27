@@ -8,24 +8,24 @@ import java.util.Map;
 
 public class GameMemoryDataAccess implements GameDataAccess {
     private final Map<Integer, GameData> gameData = new HashMap<>();
-    private final Map<Integer, ChessGame> games = new HashMap<>();
+    private final Map<Integer, ChessGame> gameState = new HashMap<>();
 
     @Override
     public void clear() {
         gameData.clear();
-        games.clear();
+        gameState.clear();
     }
 
     @Override
     public void newGame(int gameID, String gameName) {
         gameData.put(gameID, new GameData(gameID, gameName));
-        games.put(gameID, new ChessGame());
+        gameState.put(gameID, new ChessGame());
     }
 
     @Override
     public void removeGame(int gameID) {
         gameData.remove(gameID);
-        games.remove(gameID);
+        gameState.remove(gameID);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class GameMemoryDataAccess implements GameDataAccess {
 
     @Override
     public ChessGame getGame(int gameID) {
-        return games.get(gameID);
+        return gameState.get(gameID);
     }
 
     @Override
