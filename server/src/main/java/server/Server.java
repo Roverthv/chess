@@ -1,11 +1,9 @@
 package server;
 
+import dataaccess.*;
 import datastructures.GameData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dataaccess.DataAccess;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryDataAccess;
 import io.javalin.*;
 import io.javalin.http.Context;
 import io.javalin.json.JavalinGson;
@@ -20,16 +18,20 @@ import java.util.Map;
 
 public class Server {
 
-    private final DataAccess database;
+    final UserDataAccess userDatabase;
+    final AuthDataAccess authDatabase;
+    final GameDataAccess gameDatabase;
     private final AdminService admin;
     private final UserService service;
 
     private final Javalin javalin;
 
     public Server() {
-        this.database = new MemoryDataAccess();
-        this.admin = new AdminService(database);
-        this.service = new UserService(database);
+        this.userDatabase = new UserMemoryDataAccess();
+        this.authDatabase = new AuthMemoryDataAccess();
+        this.gameDatabase = new GameMemoryDataAccess();
+        this.admin = new AdminService(userDatabase, authDatabase, gameDatabase);
+        this.service = new UserService(userDatabase, authDatabase, gameDatabase);
         javalin = Javalin.create(config -> {
             config.staticFiles.add("web");
             config.jsonMapper(new JavalinGson());
@@ -139,7 +141,7 @@ public class Server {
             checkForBadRequest(body, 2);
             service.login(username, password);
             var authToken = admin.createAuth(username);
-            var authdata = database.getAuthData(authToken);
+            var authdata = authDatabase.getAuthData(authToken);
             ctx.header("authorization", authToken);
             ctx.status(200);
             ctx.result(json.toJson(authdata));
@@ -189,7 +191,7 @@ public class Server {
         try {
             checkForBadRequest(body, 3);
             var authToken = admin.createUser(username, password, email);
-            var authdata = database.getAuthData(authToken);
+            var authdata = authDatabase.getAuthData(authToken);
             ctx.header("authorization", authToken);
             ctx.status(200);
             ctx.result(json.toJson(authdata));

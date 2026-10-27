@@ -1,24 +1,27 @@
 package service;
 
+import dataaccess.*;
 import datastructures.AuthData;
 import datastructures.GameData;
 import datastructures.UserData;
-import dataaccess.DataAccess;
-import dataaccess.DataAccessException;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
 
 public class AdminService {
-    final DataAccess database;
+    final UserDataAccess userDatabase;
+    final AuthDataAccess authDatabase;
+    final GameDataAccess gameDatabase;
 
-    public AdminService(DataAccess database) {
-        this.database = database;
+    public AdminService(UserDataAccess userDatabase, AuthDataAccess authDatabase, GameDataAccess gameDatabase) {
+        this.userDatabase = userDatabase;
+        this.authDatabase = authDatabase;
+        this.gameDatabase = gameDatabase;
     }
 
     public String authenticate(String authToken) throws UnauthorizedException {
-        var token = database.getAuthData(authToken);
+        var token = authDatabase.getAuthData(authToken);
         if (token == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
@@ -28,34 +31,36 @@ public class AdminService {
     public String createAuth(String username) {
         String authToken = generateToken();
         var authdata = new AuthData(username, authToken);
-        database.addAuthData(authdata);
+        authDatabase.addAuthData(authdata);
         return authToken;
     }
 
     public String createUser(String username, String password, String email) throws DataAccessException {
-        var exists = database.getUser(username);
+        var exists = userDatabase.getUser(username);
         if (exists != null) {
             throw new DataAccessException("Error: already taken");
         }
         UserData newUser = new UserData(username, password, email, new ArrayList<>());
-        database.register(newUser);
+        userDatabase.register(newUser);
         return createAuth(username);
 
     }
 
     public List<GameData> getAllGames() {
-        return new ArrayList<>(database.getGames().values());
+        return new ArrayList<>(gameDatabase.getGames().values());
     }
 
     public void clear() {
-        database.clear();
+        userDatabase.clear();
+        authDatabase.clear();
+        gameDatabase.clear();
     }
 
     private String generateToken() {
         String token;
         do {
             token = UUID.randomUUID().toString();
-        } while (database.getAuthData(token) != null);
+        } while (authDatabase.getAuthData(token) != null);
         return token;
     }
 }
