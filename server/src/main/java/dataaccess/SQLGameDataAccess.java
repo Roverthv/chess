@@ -20,8 +20,11 @@ public class SQLGameDataAccess implements GameDataAccess {
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException {
+        var statement = "TRUNCATE gameData";
+        executeUpdate(statement);
+        var statement2 = "TRUNCATE gameState";
+        executeUpdate(statement2);
     }
 
     @Override
@@ -36,7 +39,11 @@ public class SQLGameDataAccess implements GameDataAccess {
     }
 
     @Override
-    public void removeGame(int gameID) {
+    public void removeGame(int gameID) throws DataAccessException {
+        var statement = "DELETE FROM gameData WHERE id=?";
+        executeUpdate(statement, gameID);
+        var statement2 = "DELETE FROM gameState WHERE id=?";
+        executeUpdate(statement2, gameID);
 
     }
 
