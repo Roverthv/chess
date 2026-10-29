@@ -15,7 +15,7 @@ public interface GameDataAccess {
 
     GameData getGameData(int gameID) throws DataAccessException;
 
-    ChessGame getGame(int gameID);
+    ChessGame getGame(int gameID) throws DataAccessException;
 
-    Map<Integer, GameData> getGames();
+    Map<Integer, GameData> getGames() throws DataAccessException;
 }

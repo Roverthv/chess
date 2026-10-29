@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -66,13 +67,38 @@ public class SQLGameDataAccess implements GameDataAccess {
     }
 
     @Override
-    public ChessGame getGame(int gameID) {
+    public ChessGame getGame(int gameID) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT id, json FROM gameState WHERE id=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readGameState(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
+        }
         return null;
     }
 
     @Override
-    public Map<Integer, GameData> getGames() {
-        return Map.of();
+    public Map<Integer, GameData> getGames() throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT id, json FROM gameState";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readGames(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
+        }
+        return null;
     }
 
     private GameData readGameData(ResultSet rs) throws SQLException {
@@ -83,6 +109,18 @@ public class SQLGameDataAccess implements GameDataAccess {
     private ChessGame readGameState(ResultSet rs) throws SQLException {
         var json = rs.getString("json");
         return new Gson().fromJson(json, ChessGame.class);
+    }
+
+    private Map<Integer, GameData> readGames(ResultSet rs) throws SQLException {
+        Map<Integer, GameData> games = new HashMap<>();
+        while (!rs.isAfterLast()) {
+            var id = rs.getInt("id");
+            var json = rs.getString("json");
+            GameData gameData = new Gson().fromJson(json, GameData.class);
+            games.put(id, gameData);
+            rs.next();
+        }
+        return games;
     }
 
     private void executeUpdate(String statement, Object... params) throws DataAccessException {
