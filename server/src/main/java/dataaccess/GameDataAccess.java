@@ -13,7 +13,7 @@ public interface GameDataAccess {
 
     void removeGame(int gameID);
 
-    GameData getGameData(int gameID);
+    GameData getGameData(int gameID) throws DataAccessException;
 
     ChessGame getGame(int gameID);
 
