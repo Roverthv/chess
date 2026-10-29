@@ -1,21 +1,35 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import datastructures.GameData;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
+
 public class SQLGameDataAccess implements GameDataAccess {
+
+    public SQLGameDataAccess() throws DataAccessException {
+        configureDatabase();
+    }
+
     @Override
     public void clear() {
 
     }
 
     @Override
-    public void newGame(int gameID, String gameName) {
-
+    public void newGame(int gameID, String gameName) throws DataAccessException {
+        var statement = "INSERT INTO gameData (id, name) VALUES (?, ?, ?)";
+        executeUpdate(statement, gameID, gameName);
+        var statement2 = "INSERT INTO gameState (id, json) VALUES (?, ?, ?)";
+        String json = new Gson().toJson(new ChessGame());
+        executeUpdate(statement2, gameID, json);
     }
 
     @Override
@@ -38,13 +52,33 @@ public class SQLGameDataAccess implements GameDataAccess {
         return Map.of();
     }
 
+    private void executeUpdate(String statement, Object... params) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (int i = 0; i < params.length; i++) {
+                    Object param = params[i];
+                    if (param instanceof String p) {
+                        ps.setString(i + 1, p);
+                    } else if (param instanceof Integer p) {
+                        ps.setInt(i + 1, p);
+                    } else if (param == null) {
+                        ps.setNull(i + 1, NULL);
+                    }
+                }
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
+    }
+
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  gameData (
               `id` int NOT NULL AUTO_INCREMENT,
               `name` varchar(256) NOT NULL,
-              `whitePlayer` varchar(256) NOT NULL,
-              `blackPlayer` varchar(256) NOT NULL,
+              `whitePlayer` varchar(256) DEFAULT NULL,
+              `blackPlayer` varchar(256) DEFAULT NULL,
               `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`id`),
               INDEX(whitePlayer),

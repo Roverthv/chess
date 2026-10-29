@@ -9,7 +9,7 @@ public interface GameDataAccess {
 
     void clear();
 
-    void newGame(int gameID, String gameName);
+    void newGame(int gameID, String gameName) throws DataAccessException;
 
     void removeGame(int gameID);
 
