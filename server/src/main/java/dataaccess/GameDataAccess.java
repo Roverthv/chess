@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import datastructures.GameData;
+import service.BadRequestException;
 
 import java.util.Map;
 
@@ -12,6 +13,8 @@ public interface GameDataAccess {
     void newGame(int gameID, String gameName) throws DataAccessException;
 
     void removeGame(int gameID) throws DataAccessException;
+
+    void joinGame(String username, int id, String team) throws BadRequestException, DataAccessException;
 
     GameData getGameData(int gameID) throws DataAccessException;
 

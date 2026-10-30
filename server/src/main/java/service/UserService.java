@@ -35,7 +35,7 @@ public class UserService {
     }
 
     public void joinGame(String username, int id, String team) throws DataAccessException, BadRequestException {
-        gameDatabase.getGameData(id).setPlayer(username, team);
+        gameDatabase.joinGame(username, id, team);
     }
 
     private int makeGameID() {

@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import datastructures.GameData;
+import service.BadRequestException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,11 @@ public class GameMemoryDataAccess implements GameDataAccess {
     public void removeGame(int gameID) {
         gameData.remove(gameID);
         gameState.remove(gameID);
+    }
+
+    @Override
+    public void joinGame(String username, int id, String team) throws BadRequestException, DataAccessException {
+        getGameData(id).setPlayer(username, team);
     }
 
     @Override
