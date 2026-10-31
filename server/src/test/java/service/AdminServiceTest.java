@@ -94,7 +94,7 @@ class AdminServiceTest {
     @Test
     void createUserNameTaken() {
         createUser();
-        assertThrows(DataAccessException.class, () -> admin.createUser("test user", "test password", "test email"));
+        assertThrows(BadRequestException.class, () -> admin.createUser("test user", "test password", "test email"));
     }
 
     @Test

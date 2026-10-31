@@ -1,10 +1,10 @@
-package service;
+package dataaccess.memory;
 
-import chess.ChessGame;
 import dataaccess.*;
 import datastructures.AuthData;
 import datastructures.GameData;
 import datastructures.UserData;
+import chess.ChessGame;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SQLDataAccessTest {
+class MemoryDataAccessTest {
 
     private static UserDataAccess userDatabase;
     private static AuthDataAccess authDatabase;
@@ -22,14 +22,9 @@ class SQLDataAccessTest {
 
     @BeforeEach
     void setUp() {
-        try {
-            userDatabase = new SQLUserDataAccess();
-            authDatabase = new SQLAuthDataAccess();
-            gameDatabase = new SQLGameDataAccess();
-        } catch (DataAccessException e) {
-            throw new RuntimeException("Creating new SQLGameDataAccess structure failed");
-        }
-
+        userDatabase = new UserMemoryDataAccess();
+        authDatabase = new AuthMemoryDataAccess();
+        gameDatabase = new GameMemoryDataAccess();
     }
 
     void createUser() throws DataAccessException {
@@ -49,15 +44,20 @@ class SQLDataAccessTest {
     @Test
     void clear() {
         try {
-            //createUser();
-            //createAuth();
-            //assertNotNull(gameDatabase.getUser("test user"));
-            //assertNotNull(gameDatabase.getAuthData("testToken"));
+            createUser();
+            createAuth();
+            createGame();
+            assertNotNull(userDatabase.getUser("test user"));
+            assertNotNull(authDatabase.getAuthData("testToken"));
+            assertNotNull(gameDatabase.getGameData(1));
+            assertNotNull(gameDatabase.getGame(1));
             userDatabase.clear();
-            //authDatabase.clear();
-            //gameDatabase.clear();
-            //assertNull(userDatabase.getUser("test user"));
-            //assertNull(authDatabase.getAuthData("testToken"));
+            authDatabase.clear();
+            gameDatabase.clear();
+            assertNull(userDatabase.getUser("test user"));
+            assertNull(authDatabase.getAuthData("testToken"));
+            assertNull(gameDatabase.getGameData(1));
+            assertNull(gameDatabase.getGame(1));
         } catch (DataAccessException e) {
             throw new RuntimeException("error in test clear");
         }
@@ -133,7 +133,7 @@ class SQLDataAccessTest {
         try {
             createUser();
             assertFalse(userDatabase.getUser("test user").getGameList().contains(1));
-
+            userDatabase.addGameToUser("test user", 1);
             assertTrue(userDatabase.getUser("test user").getGameList().contains(1));
         } catch (DataAccessException e) {
             throw new RuntimeException("SQL test addGameToUser failed");

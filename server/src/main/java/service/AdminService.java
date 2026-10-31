@@ -36,10 +36,10 @@ public class AdminService {
         return authToken;
     }
 
-    public String createUser(String username, String password, String email) throws DataAccessException {
+    public String createUser(String username, String password, String email) throws DataAccessException, BadRequestException {
         var exists = userDatabase.getUser(username);
         if (exists != null) {
-            throw new DataAccessException("Error: already taken");
+            throw new BadRequestException("Error: already taken");
         }
         String hashedPass = BCrypt.hashpw(password, BCrypt.gensalt());
         UserData newUser = new UserData(username, hashedPass, email, new ArrayList<>());
@@ -49,7 +49,12 @@ public class AdminService {
     }
 
     public List<GameData> getAllGames() throws DataAccessException {
-        return new ArrayList<>(gameDatabase.getGames().values());
+        var games = gameDatabase.getGames();
+        if (games == null) {
+            return new ArrayList<>();
+        } else {
+            return new ArrayList<>(games.values());
+        }
     }
 
     public void clear() throws DataAccessException {

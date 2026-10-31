@@ -1,6 +1,5 @@
 package datastructures;
 
-import dataaccess.DataAccessException;
 import service.BadRequestException;
 
 import java.util.Objects;
@@ -24,7 +23,7 @@ public class GameData {
         return blackUsername;
     }
 
-    public void setPlayer(String username, String team) throws DataAccessException, BadRequestException {
+    public void setPlayer(String username, String team) throws BadRequestException {
         switch (team) {
             case "WHITE/BLACK" -> {
                 if (whiteUsername == null) {
@@ -32,21 +31,21 @@ public class GameData {
                 } else if (blackUsername == null) {
                     blackUsername = username;
                 } else {
-                    throw new DataAccessException("Error: already taken");
+                    throw new BadRequestException("Error: already taken");
                 }
             }
             case "BLACK" -> {
                 if (blackUsername == null) {
                     blackUsername = username;
                 } else {
-                    throw new DataAccessException("Error: already taken");
+                    throw new BadRequestException("Error: already taken");
                 }
             }
             case "WHITE" -> {
                 if (whiteUsername == null) {
                     whiteUsername = username;
                 } else {
-                    throw new DataAccessException("Error: already taken");
+                    throw new BadRequestException("Error: already taken");
                 }
             }
             case null, default -> throw new BadRequestException("Error: bad request");

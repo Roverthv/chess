@@ -15,6 +15,7 @@ import service.UserService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Server {
 
@@ -27,24 +28,28 @@ public class Server {
     private final Javalin javalin;
 
     public Server() {
-        this.userDatabase = new UserMemoryDataAccess();
-        this.authDatabase = new AuthMemoryDataAccess();
-        this.gameDatabase = new GameMemoryDataAccess();
-        this.admin = new AdminService(userDatabase, authDatabase, gameDatabase);
-        this.service = new UserService(userDatabase, authDatabase, gameDatabase);
-        javalin = Javalin.create(config -> {
-            config.staticFiles.add("web");
-            config.jsonMapper(new JavalinGson());
-        });
+        try {
+            this.userDatabase = new SQLUserDataAccess();
+            this.authDatabase = new SQLAuthDataAccess();
+            this.gameDatabase = new SQLGameDataAccess();
+            this.admin = new AdminService(userDatabase, authDatabase, gameDatabase);
+            this.service = new UserService(userDatabase, authDatabase, gameDatabase);
+            javalin = Javalin.create(config -> {
+                config.staticFiles.add("web");
+                config.jsonMapper(new JavalinGson());
+            });
 
-        // Register your endpoints and exception handlers here.
-        javalin.delete("/db", this::clear);
-        javalin.delete("/session", this::logout);
-        javalin.post("/session", this::login);
-        javalin.post("/user", this::register);
-        javalin.post("/game", this::newGame);
-        javalin.put("/game", this::joinGame);
-        javalin.get("/game", this::getGames);
+            // Register your endpoints and exception handlers here.
+            javalin.delete("/db", this::clear);
+            javalin.delete("/session", this::logout);
+            javalin.post("/session", this::login);
+            javalin.post("/user", this::register);
+            javalin.post("/game", this::newGame);
+            javalin.put("/game", this::joinGame);
+            javalin.get("/game", this::getGames);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void getGames(@NotNull Context ctx) {
@@ -83,20 +88,20 @@ public class Server {
             service.joinGame(username, gameID.intValue(), team);
             ctx.status(200);
             ctx.result();
-        } catch (DataAccessException e) {
-            ctx.status(403);
-            error = Map.of("message", e.getMessage());
-            ctx.result(json.toJson(error));
         } catch (UnauthorizedException e) {
             ctx.status(401);
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | DataAccessException e) {
             ctx.status(500);
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         } catch (BadRequestException e) {
-            ctx.status(400);
+            if (Objects.equals(e.getMessage(), "Error: already taken")) {
+                ctx.status(403);
+            } else {
+                ctx.status(400);
+            }
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         }
@@ -195,16 +200,16 @@ public class Server {
             ctx.header("authorization", authToken);
             ctx.status(200);
             ctx.result(json.toJson(authdata));
-        } catch (DataAccessException e) {
-            ctx.status(403);
-            error = Map.of("message", e.getMessage());
-            ctx.result(json.toJson(error));
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | DataAccessException e) {
             ctx.status(500);
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         } catch (BadRequestException e) {
-            ctx.status(400);
+            if (Objects.equals(e.getMessage(), "Error: already taken")) {
+                ctx.status(403);
+            } else {
+                ctx.status(400);
+            }
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         }

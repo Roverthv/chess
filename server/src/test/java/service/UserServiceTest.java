@@ -8,6 +8,7 @@ import chess.ChessGame;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 
 
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ class UserServiceTest {
             } catch (DataAccessException | BadRequestException e) {
                 throw new RuntimeException(e);
             }
-            assertThrows(DataAccessException.class, () -> service.joinGame("test user", gameID, "WHITE"));
+            assertThrows(BadRequestException.class, () -> service.joinGame("test user", gameID, "WHITE"));
         } catch (DataAccessException e) {
             throw new RuntimeException("UserService test join game white taken failed");
         }
@@ -141,7 +142,7 @@ class UserServiceTest {
             } catch (DataAccessException | BadRequestException e) {
                 throw new RuntimeException(e);
             }
-            assertThrows(DataAccessException.class, () -> service.joinGame("test user", gameID, "BLACK"));
+            assertThrows(BadRequestException.class, () -> service.joinGame("test user", gameID, "BLACK"));
         } catch (DataAccessException e) {
             throw new RuntimeException("UserService test join game black taken failed");
         }
@@ -158,7 +159,7 @@ class UserServiceTest {
             } catch (DataAccessException | BadRequestException e) {
                 throw new RuntimeException(e);
             }
-            assertThrows(DataAccessException.class, () -> service.joinGame("test user", gameID, "WHITE/BLACK"));
+            assertThrows(BadRequestException.class, () -> service.joinGame("test user", gameID, "WHITE/BLACK"));
         } catch (DataAccessException e) {
             throw new RuntimeException("UserService test join game full failed");
         }
@@ -177,7 +178,8 @@ class UserServiceTest {
 
     void createUser() {
         try {
-            var userdata = new UserData("test user", "test password", "test email", new ArrayList<>());
+            String hashedPass = BCrypt.hashpw("test password", BCrypt.gensalt());
+            var userdata = new UserData("test user", hashedPass, "test email", new ArrayList<>());
             userDatabase.register(userdata);
         } catch (DataAccessException e) {
             throw new RuntimeException("UserServiceTest Assist function createUser failed");
