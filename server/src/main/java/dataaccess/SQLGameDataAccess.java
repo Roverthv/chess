@@ -3,6 +3,7 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import datastructures.GameData;
+import service.BadRequestException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,6 +50,16 @@ public class SQLGameDataAccess implements GameDataAccess {
     }
 
     @Override
+    public void joinGame(String username, int id, String team) throws BadRequestException, DataAccessException {
+        GameData updatedGame = getGameData(id);
+        updatedGame.setPlayer(username, team);
+        Gson json = new Gson();
+        var statement = "UPDATE gameData SET whiteUsername = ?, blackUsername = ?, json = ? WHERE id=?";
+        String json1 = json.toJson(updatedGame);
+        executeUpdate(statement, updatedGame.getWhiteUsername(), updatedGame.getBlackUsername(), json1, id);
+    }
+
+    @Override
     public GameData getGameData(int gameID) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT id, json FROM gameData WHERE id=?";
@@ -87,7 +98,7 @@ public class SQLGameDataAccess implements GameDataAccess {
     @Override
     public Map<Integer, GameData> getGames() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT id, json FROM gameState";
+            var statement = "SELECT id, json FROM gameData";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
@@ -148,12 +159,12 @@ public class SQLGameDataAccess implements GameDataAccess {
             CREATE TABLE IF NOT EXISTS  gameData (
               `id` int NOT NULL AUTO_INCREMENT,
               `name` varchar(256) NOT NULL,
-              `whitePlayer` varchar(256) DEFAULT NULL,
-              `blackPlayer` varchar(256) DEFAULT NULL,
+              `whiteUsername` varchar(256) DEFAULT NULL,
+              `blackUsername` varchar(256) DEFAULT NULL,
               `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`id`),
-              INDEX(whitePlayer),
-              INDEX(blackPlayer),
+              INDEX(whiteUsername),
+              INDEX(blackUsername),
               INDEX(name)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
@@ -161,7 +172,7 @@ public class SQLGameDataAccess implements GameDataAccess {
             CREATE TABLE IF NOT EXISTS  gameState (
               `id` int NOT NULL AUTO_INCREMENT,
               `json` TEXT DEFAULT NULL,
-              PRIMARY KEY (`id`),
+              PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

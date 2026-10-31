@@ -1,38 +1,25 @@
 package dataaccess;
 
-import chess.ChessGame;
-import datastructures.GameData;
+import datastructures.AuthData;
 
-import java.util.Map;
-
-public class SQLAuthDataAccess implements GameDataAccess {
+public class SQLAuthDataAccess implements AuthDataAccess {
     @Override
     public void clear() {
 
     }
 
     @Override
-    public void newGame(int gameID, String gameName) {
+    public void addAuthData(AuthData authData) {
 
     }
 
     @Override
-    public void removeGame(int gameID) {
-
-    }
-
-    @Override
-    public GameData getGameData(int gameID) {
+    public AuthData getAuthData(String authToken) {
         return null;
     }
 
     @Override
-    public ChessGame getGame(int gameID) {
-        return null;
-    }
+    public void removeAuthData(String authToken) {
 
-    @Override
-    public Map<Integer, GameData> getGames() {
-        return Map.of();
     }
 }
