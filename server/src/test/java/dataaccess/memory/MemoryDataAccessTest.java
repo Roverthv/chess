@@ -14,7 +14,7 @@ class MemoryDataAccessTest {
     private DataAccessTestUtils utils;
 
     @BeforeEach
-    void setUp() {
+    void setUpMemory() {
         userDatabase = new UserMemoryDataAccess();
         authDatabase = new AuthMemoryDataAccess();
         gameDatabase = new GameMemoryDataAccess();
@@ -22,77 +22,77 @@ class MemoryDataAccessTest {
     }
 
     @Test
-    void clear() {
+    void clearMemory() {
         utils.clear();
     }
 
     @Test
-    void register() {
+    void registerMemory() {
         utils.register();
     }
 
     @Test
-    void getUser() {
+    void getUserMemory() {
         utils.getUser();
     }
 
     @Test
-    void removeUser() {
+    void removeUserMemory() {
         utils.removeUser();
     }
 
     @Test
-    void addAuthData() {
+    void addAuthDataMemory() {
         utils.addAuthData();
     }
 
     @Test
-    void getAuthData() {
+    void getAuthDataMemory() {
         utils.getAuthData();
     }
 
     @Test
-    void removeAuthData() {
+    void removeAuthDataMemory() {
         utils.removeAuthData();
     }
 
     @Test
-    void addGameToUser() {
+    void addGameToUserMemory() {
         utils.addGameToUser();
     }
 
     @Test
-    void removeGameFromUser() {
+    void removeGameFromUserMemory() {
         utils.removeGameFromUser();
     }
 
     @Test
-    void newGame() {
+    void newGameMemory() {
         utils.newGame();
     }
 
     @Test
-    void removeGame() {
+    void removeGameMemory() {
         utils.removeGame();
     }
 
     @Test
-    void getGameData() {
+    void getGameDataMemory() {
         utils.getGameData();
     }
 
     @Test
-    void getGame() {
+    void getGameMemory() {
         utils.getGame();
     }
 
     @Test
-    void getGames() {
+    void getGamesMemory() {
         utils.getGames();
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDownMemory() {
         try {
             userDatabase.clear();
             authDatabase.clear();

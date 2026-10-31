@@ -13,7 +13,7 @@ class SQLDataAccessTest {
     private DataAccessTestUtils utils;
 
     @BeforeEach
-    void setUp() {
+    void setUpSQL() {
         try {
             userDatabase = new SQLUserDataAccess();
             authDatabase = new SQLAuthDataAccess();
@@ -26,77 +26,77 @@ class SQLDataAccessTest {
     }
 
     @Test
-    void clear() {
+    void clearSQL() {
         utils.clear();
     }
 
     @Test
-    void register() {
+    void registerSQL() {
         utils.register();
     }
 
     @Test
-    void getUser() {
+    void getUserSQL() {
         utils.getUser();
     }
 
     @Test
-    void removeUser() {
+    void removeUserSQL() {
         utils.removeUser();
     }
 
     @Test
-    void addAuthData() {
+    void addAuthDataSQL() {
         utils.addAuthData();
     }
 
     @Test
-    void getAuthData() {
+    void getAuthDataSQL() {
         utils.getAuthData();
     }
 
     @Test
-    void removeAuthData() {
+    void removeAuthDataSQL() {
         utils.removeAuthData();
     }
 
     @Test
-    void addGameToUser() {
+    void addGameToUserSQL() {
         utils.addGameToUser();
     }
 
     @Test
-    void removeGameFromUser() {
+    void removeGameFromUserSQL() {
         utils.removeGameFromUser();
     }
 
     @Test
-    void newGame() {
+    void newGameSQL() {
         utils.newGame();
     }
 
     @Test
-    void removeGame() {
+    void removeGameSQL() {
         utils.removeGame();
     }
 
     @Test
-    void getGameData() {
+    void getGameDataSQL() {
         utils.getGameData();
     }
 
     @Test
-    void getGame() {
+    void getGameSQL() {
         utils.getGame();
     }
 
     @Test
-    void getGames() {
+    void getGamesSQL() {
         utils.getGames();
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDownSQL() {
         try {
             userDatabase.clear();
             authDatabase.clear();
