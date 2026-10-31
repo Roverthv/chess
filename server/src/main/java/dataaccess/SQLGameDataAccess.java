@@ -12,21 +12,18 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
-
 public class SQLGameDataAccess implements GameDataAccess {
 
     public SQLGameDataAccess() throws DataAccessException {
-        configureDatabase();
+        DatabaseManager.configureDatabase(createStatements);
     }
 
     @Override
     public void clear() throws DataAccessException {
         var statement = "TRUNCATE gameData";
-        executeUpdate(statement);
+        DatabaseManager.executeUpdate(statement);
         var statement2 = "TRUNCATE gameState";
-        executeUpdate(statement2);
+        DatabaseManager.executeUpdate(statement2);
     }
 
     @Override
@@ -34,18 +31,18 @@ public class SQLGameDataAccess implements GameDataAccess {
         Gson json = new Gson();
         var statement = "INSERT INTO gameData (id, name, json) VALUES (?, ?, ?)";
         String json1 = json.toJson(new GameData(gameID, gameName));
-        executeUpdate(statement, gameID, gameName, json1);
+        DatabaseManager.executeUpdate(statement, gameID, gameName, json1);
         var statement2 = "INSERT INTO gameState (id, json) VALUES (?, ?)";
         String json2 = json.toJson(new ChessGame());
-        executeUpdate(statement2, gameID, json2);
+        DatabaseManager.executeUpdate(statement2, gameID, json2);
     }
 
     @Override
     public void removeGame(int gameID) throws DataAccessException {
         var statement = "DELETE FROM gameData WHERE id=?";
-        executeUpdate(statement, gameID);
+        DatabaseManager.executeUpdate(statement, gameID);
         var statement2 = "DELETE FROM gameState WHERE id=?";
-        executeUpdate(statement2, gameID);
+        DatabaseManager.executeUpdate(statement2, gameID);
 
     }
 
@@ -56,7 +53,7 @@ public class SQLGameDataAccess implements GameDataAccess {
         Gson json = new Gson();
         var statement = "UPDATE gameData SET whiteUsername = ?, blackUsername = ?, json = ? WHERE id=?";
         String json1 = json.toJson(updatedGame);
-        executeUpdate(statement, updatedGame.getWhiteUsername(), updatedGame.getBlackUsername(), json1, id);
+        DatabaseManager.executeUpdate(statement, updatedGame.getWhiteUsername(), updatedGame.getBlackUsername(), json1, id);
     }
 
     @Override
@@ -134,26 +131,6 @@ public class SQLGameDataAccess implements GameDataAccess {
         return games;
     }
 
-    private void executeUpdate(String statement, Object... params) throws DataAccessException {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (int i = 0; i < params.length; i++) {
-                    Object param = params[i];
-                    if (param instanceof String p) {
-                        ps.setString(i + 1, p);
-                    } else if (param instanceof Integer p) {
-                        ps.setInt(i + 1, p);
-                    } else if (param == null) {
-                        ps.setNull(i + 1, NULL);
-                    }
-                }
-                ps.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
-        }
-    }
-
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  gameData (
@@ -176,17 +153,4 @@ public class SQLGameDataAccess implements GameDataAccess {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
 }
