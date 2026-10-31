@@ -97,11 +97,7 @@ public class Server {
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         } catch (BadRequestException e) {
-            if (Objects.equals(e.getMessage(), "Error: already taken")) {
-                ctx.status(403);
-            } else {
-                ctx.status(400);
-            }
+            alreadyTakenCheck(ctx, e.getMessage());
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         }
@@ -205,11 +201,7 @@ public class Server {
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         } catch (BadRequestException e) {
-            if (Objects.equals(e.getMessage(), "Error: already taken")) {
-                ctx.status(403);
-            } else {
-                ctx.status(400);
-            }
+            alreadyTakenCheck(ctx, e.getMessage());
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
         }
@@ -249,6 +241,14 @@ public class Server {
             if (i == null || i.isEmpty()) {
                 throw new BadRequestException("Error: bad request");
             }
+        }
+    }
+
+    private void alreadyTakenCheck(Context ctx, String e) {
+        if (Objects.equals(e, "Error: already taken")) {
+            ctx.status(403);
+        } else {
+            ctx.status(400);
         }
     }
 
