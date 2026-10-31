@@ -9,6 +9,7 @@ public record UserData(String username, String password, String email, ArrayList
     public String getUsername() {
         return username;
     }
+    public String getEmail() { return email;}
 
     public boolean checkPassword(String passGiven) {
         return BCrypt.checkpw(passGiven, password);
@@ -41,4 +42,6 @@ public record UserData(String username, String password, String email, ArrayList
     public int hashCode() {
         return Objects.hash(username, password, gameIDs);
     }
+
+
 }

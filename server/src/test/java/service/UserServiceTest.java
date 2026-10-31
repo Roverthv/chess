@@ -176,8 +176,12 @@ class UserServiceTest {
     }
 
     void createUser() {
-        var userdata = new UserData("test user", "test password", "test email", new ArrayList<>());
-        userDatabase.register(userdata);
+        try {
+            var userdata = new UserData("test user", "test password", "test email", new ArrayList<>());
+            userDatabase.register(userdata);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("UserServiceTest Assist function createUser failed");
+        }
     }
 
     void createAuth() throws DataAccessException {

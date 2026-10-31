@@ -16,7 +16,7 @@ public class UserService {
     }
 
 
-    public void login(String username, String password) throws UnauthorizedException {
+    public void login(String username, String password) throws UnauthorizedException, DataAccessException {
         var user = userDatabase.getUser(username);
         if (user == null || !user.checkPassword(password)) {
             throw new UnauthorizedException("Error: unauthorized");

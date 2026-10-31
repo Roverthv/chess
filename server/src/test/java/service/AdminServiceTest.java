@@ -20,8 +20,12 @@ class AdminServiceTest {
     AdminService admin;
 
     void createUser() {
-        var userdata = new UserData("test user", "test password", "test email", new ArrayList<>());
-        userDatabase.register(userdata);
+        try {
+            var userdata = new UserData("test user", "test password", "test email", new ArrayList<>());
+            userDatabase.register(userdata);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("AdminServiceTest Assist function createUser failed");
+        }
     }
 
     void createAuthData() throws DataAccessException {
