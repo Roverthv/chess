@@ -32,4 +32,9 @@ public class UserMemoryDataAccess implements UserDataAccess {
     public void addGameToUser(String username, int gameID) {
         users.get(username).addGame(gameID);
     }
+
+    @Override
+    public void removeGamefromUser(String username, int gameID) {
+        users.get(username).removeGame(gameID);
+    }
 }

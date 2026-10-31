@@ -16,13 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SQLDataAccessTest {
 
-    //    private static UserDataAccess userDatabase;
+    private static UserDataAccess userDatabase;
     private static AuthDataAccess authDatabase;
     private static GameDataAccess gameDatabase;
 
     @BeforeEach
     void setUp() {
         try {
+            userDatabase = new SQLUserDataAccess();
             authDatabase = new SQLAuthDataAccess();
             gameDatabase = new SQLGameDataAccess();
         } catch (DataAccessException e) {
@@ -31,10 +32,10 @@ class SQLDataAccessTest {
 
     }
 
-    //    void createUser() {
-//        var userdata = new UserData("test user", "test password", "test email", new ArrayList<>());
-//        gameDatabase.register(userdata);
-//    }
+    void createUser() throws DataAccessException {
+        var userdata = new UserData("test user", "test password", "test email", new ArrayList<>());
+        userDatabase.register(userdata);
+    }
 
     void createAuth() throws DataAccessException {
         var authdata = new AuthData("test user", "testToken");
@@ -52,7 +53,8 @@ class SQLDataAccessTest {
             //createAuth();
             //assertNotNull(gameDatabase.getUser("test user"));
             //assertNotNull(gameDatabase.getAuthData("testToken"));
-            authDatabase.clear();
+            userDatabase.clear();
+            //authDatabase.clear();
             //gameDatabase.clear();
             //assertNull(userDatabase.getUser("test user"));
             //assertNull(authDatabase.getAuthData("testToken"));
@@ -62,25 +64,37 @@ class SQLDataAccessTest {
 
     }
 
-//    @Test
-//    void register() {
-//        createUser();
-//        assertNotNull(gameDatabase.getUser("test user"));
-//    }
-//
-//    @Test
-//    void getUser() {
-//        createUser();
-//        assertEquals(new UserData("test user", "test password", "test email", new ArrayList<>()), gameDatabase.getUser("test user"));
-//    }
-//
-//    @Test
-//    void removeUser() {
-//        createUser();
-//        assertNotNull(gameDatabase.getUser("test user"));
-//        gameDatabase.removeUser("test user");
-//        assertNull(gameDatabase.getUser("test user"));
-//    }
+    @Test
+    void register() {
+        try {
+            createUser();
+            assertNotNull(userDatabase.getUser("test user"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("SQL test register failed");
+        }
+    }
+
+    @Test
+    void getUser() {
+        try {
+            createUser();
+            assertEquals(new UserData("test user", "test password", "test email", new ArrayList<>()), userDatabase.getUser("test user"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("SQL test getUser failed");
+        }
+    }
+
+    @Test
+    void removeUser() {
+        try {
+            createUser();
+            assertNotNull(userDatabase.getUser("test user"));
+            userDatabase.removeUser("test user");
+            assertNull(userDatabase.getUser("test user"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("SQL test removeUser failed");
+        }
+    }
 
     @Test
     void addAuthData() {
@@ -114,23 +128,30 @@ class SQLDataAccessTest {
         }
     }
 
-//    @Test
-//    void addGameToUser() {
-//        createUser();
-//        assertFalse(gameDatabase.getUser("test user").getGameList().contains(1));
-//        gameDatabase.getUser("test user").addGame(1);
-//        assertTrue(gameDatabase.getUser("test user").getGameList().contains(1));
-//    }
-//
-//    @Test
-//    void removeGameFromUser() {
-//        createUser();
-//        gameDatabase.getUser("test user").addGame(1);
-//        assertTrue(gameDatabase.getUser("test user").getGameList().contains(1));
-//        gameDatabase.getUser("test user").removeGame(1);
-//        assertFalse(gameDatabase.getUser("test user").getGameList().contains(1));
-//
-//    }
+    @Test
+    void addGameToUser() {
+        try {
+            createUser();
+            assertFalse(userDatabase.getUser("test user").getGameList().contains(1));
+
+            assertTrue(userDatabase.getUser("test user").getGameList().contains(1));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("SQL test addGameToUser failed");
+        }
+    }
+
+    @Test
+    void removeGameFromUser() {
+        try {
+            createUser();
+            userDatabase.addGameToUser("test user", 1);
+            assertTrue(userDatabase.getUser("test user").getGameList().contains(1));
+            userDatabase.removeGamefromUser("test user", 1);
+            assertFalse(userDatabase.getUser("test user").getGameList().contains(1));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("SQL test removeGameFromUser failed");
+        }
+    }
 
     @Test
     void newGame() {
@@ -197,7 +218,7 @@ class SQLDataAccessTest {
     @AfterEach
     void tearDown() {
         try {
-            //userDatabase.clear();
+            userDatabase.clear();
             authDatabase.clear();
             gameDatabase.clear();
         } catch (DataAccessException e) {
