@@ -153,7 +153,7 @@ public class Server {
             ctx.status(401);
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | DataAccessException e) {
             ctx.status(500);
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
@@ -174,7 +174,7 @@ public class Server {
             ctx.status(401);
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | DataAccessException e) {
             ctx.status(500);
             error = Map.of("message", e.getMessage());
             ctx.result(json.toJson(error));

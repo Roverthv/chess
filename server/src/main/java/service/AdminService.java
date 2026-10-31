@@ -20,7 +20,7 @@ public class AdminService {
         this.gameDatabase = gameDatabase;
     }
 
-    public String authenticate(String authToken) throws UnauthorizedException {
+    public String authenticate(String authToken) throws UnauthorizedException, DataAccessException {
         var token = authDatabase.getAuthData(authToken);
         if (token == null) {
             throw new UnauthorizedException("Error: unauthorized");
@@ -28,7 +28,7 @@ public class AdminService {
         return token.getUsername();
     }
 
-    public String createAuth(String username) {
+    public String createAuth(String username) throws DataAccessException {
         String authToken = generateToken();
         var authdata = new AuthData(username, authToken);
         authDatabase.addAuthData(authdata);
@@ -56,7 +56,7 @@ public class AdminService {
         gameDatabase.clear();
     }
 
-    private String generateToken() {
+    private String generateToken() throws DataAccessException {
         String token;
         do {
             token = UUID.randomUUID().toString();

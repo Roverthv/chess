@@ -24,7 +24,7 @@ class AdminServiceTest {
         userDatabase.register(userdata);
     }
 
-    void createAuthData() {
+    void createAuthData() throws DataAccessException {
         var authdata = new AuthData("test user", "testToken");
         authDatabase.addAuthData(authdata);
     }
@@ -43,9 +43,9 @@ class AdminServiceTest {
 
     @AfterEach
     void tearDown() {
-        userDatabase.clear();
-        authDatabase.clear();
         try {
+            userDatabase.clear();
+            authDatabase.clear();
             gameDatabase.clear();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -54,20 +54,32 @@ class AdminServiceTest {
 
     @Test
     void authenticatePass() {
-        createAuthData();
-        assertDoesNotThrow(() -> admin.authenticate("testToken"));
+        try {
+            createAuthData();
+            assertDoesNotThrow(() -> admin.authenticate("testToken"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("AdminService authenticatePass test failed");
+        }
     }
 
     @Test
     void authenticateFail() {
-        createAuthData();
-        assertThrows(UnauthorizedException.class, () -> admin.authenticate("BadToken"));
+        try {
+            createAuthData();
+            assertThrows(UnauthorizedException.class, () -> admin.authenticate("BadToken"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("AdminService authenticateFail test failed");
+        }
     }
 
     @Test
     void createAuth() {
-        String authToken = admin.createAuth("test user");
-        assertEquals(new AuthData("test user", authToken), authDatabase.getAuthData(authToken));
+        try {
+            String authToken = admin.createAuth("test user");
+            assertEquals(new AuthData("test user", authToken), authDatabase.getAuthData(authToken));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("AdminService createAuth test failed");
+        }
     }
 
     @Test

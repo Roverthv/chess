@@ -23,7 +23,7 @@ public class UserService {
         }
     }
 
-    public void logout(String authToken) {
+    public void logout(String authToken) throws DataAccessException {
         authDatabase.removeAuthData(authToken);
     }
 

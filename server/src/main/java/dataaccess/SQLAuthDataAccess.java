@@ -31,7 +31,7 @@ public class SQLAuthDataAccess implements AuthDataAccess {
     @Override
     public AuthData getAuthData(String authToken) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT json FROM gameData WHERE authToken=?";
+            var statement = "SELECT json FROM authData WHERE authToken=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setString(1, authToken);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -60,7 +60,7 @@ public class SQLAuthDataAccess implements AuthDataAccess {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  authData (
-              `authToken` STRING NOT NULL,
+              `authToken` varchar(36) NOT NULL,
               `username` varchar(256) NOT NULL,
               `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`authToken`),

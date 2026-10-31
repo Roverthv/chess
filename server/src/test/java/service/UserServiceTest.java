@@ -32,9 +32,9 @@ class UserServiceTest {
 
     @AfterEach
     void tearDown() {
-        userDatabase.clear();
-        authDatabase.clear();
         try {
+            userDatabase.clear();
+            authDatabase.clear();
             gameDatabase.clear();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -61,8 +61,12 @@ class UserServiceTest {
 
     @Test
     void testLogoutPass() {
-        createAuth();
-        assertDoesNotThrow(() -> service.logout("testToken"));
+        try {
+            createAuth();
+            assertDoesNotThrow(() -> service.logout("testToken"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("UserService test logoutpass failed");
+        }
     }
 
     @Test
@@ -176,7 +180,7 @@ class UserServiceTest {
         userDatabase.register(userdata);
     }
 
-    void createAuth() {
+    void createAuth() throws DataAccessException {
         var authdata = new AuthData("test user", "testToken");
         authDatabase.addAuthData(authdata);
     }
