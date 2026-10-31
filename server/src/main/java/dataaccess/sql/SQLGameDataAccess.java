@@ -1,7 +1,9 @@
-package dataaccess;
+package dataaccess.sql;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import dataaccess.GameDataAccess;
 import datastructures.GameData;
 import service.BadRequestException;
 

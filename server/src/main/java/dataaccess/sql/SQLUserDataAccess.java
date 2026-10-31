@@ -1,6 +1,8 @@
-package dataaccess;
+package dataaccess.sql;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import dataaccess.UserDataAccess;
 import datastructures.UserData;
 
 import java.sql.Connection;
