@@ -4,6 +4,7 @@ import dataaccess.*;
 import datastructures.AuthData;
 import datastructures.GameData;
 import datastructures.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +41,8 @@ public class AdminService {
         if (exists != null) {
             throw new DataAccessException("Error: already taken");
         }
-        UserData newUser = new UserData(username, password, email, new ArrayList<>());
+        String hashedPass = BCrypt.hashpw(password, BCrypt.gensalt());
+        UserData newUser = new UserData(username, hashedPass, email, new ArrayList<>());
         userDatabase.register(newUser);
         return createAuth(username);
 

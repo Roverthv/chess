@@ -1,5 +1,7 @@
 package datastructures;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -9,7 +11,7 @@ public record UserData(String username, String password, String email, ArrayList
     }
 
     public boolean checkPassword(String passGiven) {
-        return password.equals(passGiven);
+        return BCrypt.checkpw(passGiven, password);
     }
 
     public ArrayList<Integer> getGameList() {
