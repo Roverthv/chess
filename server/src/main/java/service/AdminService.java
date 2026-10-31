@@ -46,11 +46,11 @@ public class AdminService {
 
     }
 
-    public List<GameData> getAllGames() {
+    public List<GameData> getAllGames() throws DataAccessException {
         return new ArrayList<>(gameDatabase.getGames().values());
     }
 
-    public void clear() {
+    public void clear() throws DataAccessException {
         userDatabase.clear();
         authDatabase.clear();
         gameDatabase.clear();

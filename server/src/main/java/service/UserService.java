@@ -27,7 +27,7 @@ public class UserService {
         authDatabase.removeAuthData(authToken);
     }
 
-    public int createGame(String username, String gameName) {
+    public int createGame(String username, String gameName) throws DataAccessException {
         var gameID = makeGameID();
         gameDatabase.newGame(gameID, gameName);
         userDatabase.addGameToUser(username, gameID);
@@ -38,7 +38,7 @@ public class UserService {
         gameDatabase.joinGame(username, id, team);
     }
 
-    private int makeGameID() {
+    private int makeGameID() throws DataAccessException {
 
         int id;
         Random random = new Random();

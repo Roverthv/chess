@@ -16,6 +16,14 @@ public class GameData {
         this.gameID = gameID;
     }
 
+    public String getWhiteUsername() {
+        return whiteUsername;
+    }
+
+    public String getBlackUsername() {
+        return blackUsername;
+    }
+
     public void setPlayer(String username, String team) throws DataAccessException, BadRequestException {
         switch (team) {
             case "WHITE/BLACK" -> {
@@ -58,5 +66,15 @@ public class GameData {
     @Override
     public int hashCode() {
         return Objects.hash(gameID, blackUsername, whiteUsername, gameName);
+    }
+
+    @Override
+    public String toString() {
+        return "GameData{" +
+                "gameID=" + gameID +
+                ", blackUsername='" + blackUsername + '\'' +
+                ", whiteUsername='" + whiteUsername + '\'' +
+                ", gameName='" + gameName + '\'' +
+                '}';
     }
 }

@@ -1,12 +1,10 @@
 package service;
 
+import dataaccess.*;
 import datastructures.AuthData;
 import datastructures.GameData;
 import datastructures.UserData;
 import chess.ChessGame;
-import dataaccess.DataAccess;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryDataAccess;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,19 +15,30 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
-    DataAccess database;
+    UserDataAccess userDatabase;
+    AuthDataAccess authDatabase;
+    GameDataAccess gameDatabase;
 
     UserService service;
 
     @BeforeEach
     void setUp() {
-        database = new MemoryDataAccess();
-        service = new UserService(database);
+        userDatabase = new UserMemoryDataAccess();
+        authDatabase = new AuthMemoryDataAccess();
+        gameDatabase = new GameMemoryDataAccess();
+
+        service = new UserService(userDatabase, authDatabase, gameDatabase);
     }
 
     @AfterEach
     void tearDown() {
-        database.clear();
+        userDatabase.clear();
+        authDatabase.clear();
+        try {
+            gameDatabase.clear();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -59,83 +68,116 @@ class UserServiceTest {
     @Test
     void testCreateGame() {
         createUser();
-        int gameID = service.createGame("test user", "test game");
-        assertEquals(new GameData(gameID, "test game"), database.getGameData(gameID));
-        assertEquals(new ChessGame(), database.getGame(gameID));
+        try {
+            int gameID = service.createGame("test user", "test game");
+            assertEquals(new GameData(gameID, "test game"), gameDatabase.getGameData(gameID));
+            assertEquals(new ChessGame(), gameDatabase.getGame(gameID));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("UserService test create game failed");
+        }
+
     }
 
     @Test
     void testJoinGameWhite() {
-        createUser();
-        int gameID = service.createGame("test user", "test game");
-        assertDoesNotThrow(() -> service.joinGame("test user", gameID, "WHITE"));
+        try {
+            createUser();
+            int gameID = service.createGame("test user", "test game");
+            assertDoesNotThrow(() -> service.joinGame("test user", gameID, "WHITE"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("UserService test join game white failed");
+        }
     }
 
     @Test
     void testJoinGameBlack() {
-        createUser();
-        int gameID = service.createGame("test user", "test game");
-        assertDoesNotThrow(() -> service.joinGame("test user", gameID, "BLACK"));
+        try {
+            createUser();
+            int gameID = service.createGame("test user", "test game");
+            assertDoesNotThrow(() -> service.joinGame("test user", gameID, "BLACK"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("UserService test join game black failed");
+        }
     }
 
     @Test
     void testJoinGameEither() {
-        createUser();
-        int gameID = service.createGame("test user", "test game");
-        assertDoesNotThrow(() -> service.joinGame("test user", gameID, "WHITE/BLACK"));
+        try {
+            createUser();
+            int gameID = service.createGame("test user", "test game");
+            assertDoesNotThrow(() -> service.joinGame("test user", gameID, "WHITE/BLACK"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("UserService test join game either failed");
+        }
     }
 
     @Test
     void testJoinGameWhiteTaken() {
-        createUser();
-        int gameID = service.createGame("test user", "test game");
         try {
-            service.joinGame("test user", gameID, "WHITE");
-        } catch (DataAccessException | BadRequestException e) {
-            throw new RuntimeException(e);
+            createUser();
+            int gameID = service.createGame("test user", "test game");
+            try {
+                service.joinGame("test user", gameID, "WHITE");
+            } catch (DataAccessException | BadRequestException e) {
+                throw new RuntimeException(e);
+            }
+            assertThrows(DataAccessException.class, () -> service.joinGame("test user", gameID, "WHITE"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("UserService test join game white taken failed");
         }
-        assertThrows(DataAccessException.class, () -> service.joinGame("test user", gameID, "WHITE"));
     }
 
     @Test
     void testJoinGameBlackTaken() {
-        createUser();
-        int gameID = service.createGame("test user", "test game");
         try {
-            service.joinGame("test user", gameID, "BLACK");
-        } catch (DataAccessException | BadRequestException e) {
-            throw new RuntimeException(e);
+            createUser();
+            int gameID = service.createGame("test user", "test game");
+            try {
+                service.joinGame("test user", gameID, "BLACK");
+            } catch (DataAccessException | BadRequestException e) {
+                throw new RuntimeException(e);
+            }
+            assertThrows(DataAccessException.class, () -> service.joinGame("test user", gameID, "BLACK"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("UserService test join game black taken failed");
         }
-        assertThrows(DataAccessException.class, () -> service.joinGame("test user", gameID, "BLACK"));
     }
 
     @Test
     void testJoinGameFull() {
-        createUser();
-        int gameID = service.createGame("test user", "test game");
         try {
-            service.joinGame("test user", gameID, "WHITE");
-            service.joinGame("test user", gameID, "BLACK");
-        } catch (DataAccessException | BadRequestException e) {
-            throw new RuntimeException(e);
+            createUser();
+            int gameID = service.createGame("test user", "test game");
+            try {
+                service.joinGame("test user", gameID, "WHITE");
+                service.joinGame("test user", gameID, "BLACK");
+            } catch (DataAccessException | BadRequestException e) {
+                throw new RuntimeException(e);
+            }
+            assertThrows(DataAccessException.class, () -> service.joinGame("test user", gameID, "WHITE/BLACK"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("UserService test join game full failed");
         }
-        assertThrows(DataAccessException.class, () -> service.joinGame("test user", gameID, "WHITE/BLACK"));
     }
 
     @Test
     void testJoinGameInvalid() {
-        createUser();
-        int gameID = service.createGame("test user", "test game");
-        assertThrows(BadRequestException.class, () -> service.joinGame("test user", gameID, "Green"));
+        try {
+            createUser();
+            int gameID = service.createGame("test user", "test game");
+            assertThrows(BadRequestException.class, () -> service.joinGame("test user", gameID, "Green"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("UserService test join game invalid failed");
+        }
     }
 
     void createUser() {
         var userdata = new UserData("test user", "test password", "test email", new ArrayList<>());
-        database.register(userdata);
+        userDatabase.register(userdata);
     }
 
     void createAuth() {
         var authdata = new AuthData("test user", "testToken");
-        database.addAuthData(authdata);
+        authDatabase.addAuthData(authdata);
     }
 }
