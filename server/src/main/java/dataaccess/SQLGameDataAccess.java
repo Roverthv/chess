@@ -59,7 +59,7 @@ public class SQLGameDataAccess implements GameDataAccess {
     @Override
     public GameData getGameData(int gameID) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT id, json FROM gameData WHERE id=?";
+            var statement = "SELECT json FROM gameData WHERE id=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, gameID);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -77,7 +77,7 @@ public class SQLGameDataAccess implements GameDataAccess {
     @Override
     public ChessGame getGame(int gameID) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT id, json FROM gameState WHERE id=?";
+            var statement = "SELECT json FROM gameState WHERE id=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, gameID);
                 try (ResultSet rs = ps.executeQuery()) {

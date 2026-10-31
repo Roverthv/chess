@@ -4,11 +4,11 @@ import datastructures.AuthData;
 
 public interface AuthDataAccess {
 
-    void clear();
+    void clear() throws DataAccessException;
 
-    void addAuthData(AuthData authData);
+    void addAuthData(AuthData authData) throws DataAccessException;
 
-    AuthData getAuthData(String authToken);
+    AuthData getAuthData(String authToken) throws DataAccessException;
 
-    void removeAuthData(String authToken);
+    void removeAuthData(String authToken) throws DataAccessException;
 }
