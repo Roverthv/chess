@@ -2,6 +2,7 @@ package client;
 
 import ui.EscapeSequences;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ClientInterface {
@@ -12,6 +13,7 @@ public class ClientInterface {
     State state = State.SIGNEDOUT;
     Scanner scanner = new Scanner(System.in);
     ClientBackground facade = new ClientBackground();
+    List<GameStruct> gameList;
 
     public void run() {
         System.out.println("Welcome to Chess. Type Help to get started.");
@@ -69,6 +71,13 @@ public class ClientInterface {
     }
 
     private void handleList() {
+        gameList = facade.sendListGameRequest();
+        int count = 1;
+        for (GameStruct i : gameList) {
+            System.out.printf("%d. %s: White: %s, Black: %s", count, i.getGameName(), i.getWhiteUsername(), i.getBlackUsername());
+            System.out.println();
+            count++;
+        }
     }
 
     private void handleCreate() {

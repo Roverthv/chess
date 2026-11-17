@@ -1,12 +1,15 @@
 package client;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -122,7 +125,23 @@ public class ClientBackground {
         receiveResponse(response);
     }
 
-    public void sendListGameRequest() {
+    public List<GameStruct> sendListGameRequest() {
+        String url = urlString + "/game";
+        String method = "GET";
+        String body = "";
+        HttpResponse<String> response = null;
+        try {
+            response = sendRequest(url, authToken, method, body);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        receiveResponse(response);
+        Type mapType = new TypeToken<Map<String, List<GameStruct>>>() {
+        }.getType();
+        Map<String, List<GameStruct>> responseBody = new Gson().fromJson(response.body(), mapType);
+        return responseBody.get("games");
     }
 
     public void sendJoinGameRequest() {

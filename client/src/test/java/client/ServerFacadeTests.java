@@ -74,6 +74,7 @@ public class ServerFacadeTests {
 
     private void createGame() {
         try {
+            createUser();
             service.createGame("test user", "test game");
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -105,6 +106,14 @@ public class ServerFacadeTests {
         String testToken = createAuth();
         facade.setAuthToken(testToken);
         facade.sendCreateGameRequest("test name");
+    }
+
+    @Test
+    public void listGamesTest() {
+        createGame();
+        String testToken = createAuth();
+        facade.setAuthToken(testToken);
+        facade.sendListGameRequest();
     }
 
 }
