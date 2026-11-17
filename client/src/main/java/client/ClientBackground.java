@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -144,7 +145,21 @@ public class ClientBackground {
         return responseBody.get("games");
     }
 
-    public void sendJoinGameRequest() {
+    public ChessGame sendJoinGameRequest(double gameID, String teamColor) {
+        String url = urlString + "/game";
+        String method = "PUT";
+        String body = new Gson().toJson(Map.of("gameID", gameID, "playerColor", teamColor));
+        ;
+        HttpResponse<String> response = null;
+        try {
+            response = sendRequest(url, authToken, method, body);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        receiveResponse(response);
+        return new Gson().fromJson(response.headers().map().get("gameState").getFirst(), ChessGame.class);
     }
 
     public void sendObserveGameRequest() {

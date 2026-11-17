@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 
 import java.util.Random;
@@ -34,8 +35,9 @@ public class UserService {
         return gameID;
     }
 
-    public void joinGame(String username, int id, String team) throws DataAccessException, BadRequestException {
+    public ChessGame joinGame(String username, int id, String team) throws DataAccessException, BadRequestException {
         gameDatabase.joinGame(username, id, team);
+        return gameDatabase.getGame(id);
     }
 
     private int makeGameID() throws DataAccessException {

@@ -1,8 +1,10 @@
 package client;
 
+import chess.ChessGame;
 import ui.EscapeSequences;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ClientInterface {
@@ -68,11 +70,43 @@ public class ClientInterface {
     }
 
     private void handleJoin() {
+        boolean valid = false;
+        int id = 1;
+        while (!valid) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+            System.out.print("Enter Game Number: ");
+            while (!scanner.hasNextInt()) {
+                String invalidInput = scanner.nextLine();
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+                System.out.printf("%s is not a number, please provide the number of the game you wish to join: ", invalidInput);
+            }
+            id = scanner.nextInt();
+            if (id < 0 || id > gameList.size()) {
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+                System.out.printf("%d is not a game in the list please try again", id);
+                System.out.println();
+                break;
+            }
+            valid = true;
+        }
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+        System.out.print("Enter the team color you would like play: ");
+        String team = scanner.nextLine();
+
+        while (!Objects.equals(team, "white") || !Objects.equals(team, "black")) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+            System.out.printf("%s is not a valid team color, please enter 'white' or 'black': ", team);
+            team = scanner.nextLine();
+        }
+        double gameID = gameList.get(id - 1).getGameID();
+        ChessGame game = facade.sendJoinGameRequest(gameID, team);
+        //print out board based on what we got back.
     }
 
     private void handleList() {
         gameList = facade.sendListGameRequest();
         int count = 1;
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
         for (GameStruct i : gameList) {
             System.out.printf("%d. %s: White: %s, Black: %s", count, i.getGameName(), i.getWhiteUsername(), i.getBlackUsername());
             System.out.println();
@@ -130,14 +164,14 @@ public class ClientInterface {
         System.out.println();
     }
 
-    private String[] SIGNEDOUTCOMMANDS = {
+    private final String[] SIGNEDOUTCOMMANDS = {
             "register", " - create a new account",
             "login", " - play on an existing account",
             "quit", " - close application",
             "help", " - view possible commands"
     };
 
-    private String[] SIGNEDINCOMMANDS = {
+    private final String[] SIGNEDINCOMMANDS = {
             "create", " - create a new game",
             "list", " - list existing games",
             "join", " - play in an existing game",
