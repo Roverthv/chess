@@ -13,7 +13,7 @@ import service.UserService;
 public class ServerFacadeTests {
 
     private static Server server;
-    ClientBackground facade = new ClientBackground();
+    private static ServerFacade facade;
     private static UserDataAccess userDatabase;
     private static AuthDataAccess authDatabase;
     private static GameDataAccess gameDatabase;
@@ -23,8 +23,9 @@ public class ServerFacadeTests {
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(8080);
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+        facade = new ServerFacade(port);
     }
 
     @BeforeEach

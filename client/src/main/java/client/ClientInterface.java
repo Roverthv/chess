@@ -17,7 +17,7 @@ public class ClientInterface {
 
     State state = State.SIGNEDOUT;
     Scanner scanner = new Scanner(System.in);
-    ClientBackground facade = new ClientBackground();
+    ServerFacade facade = new ServerFacade(8080);
     List<GameStruct> gameList;
 
     public void run() {
@@ -91,8 +91,21 @@ public class ClientInterface {
             valid = true;
         }
         double gameID = gameList.get(id - 1).getGameID();
-        ChessGame game = facade.sendObserveGameRequest(gameID);
-        printBoardPerspectiveWhite(game);
+        ChessGame game;
+        try {
+            game = facade.sendObserveGameRequest(gameID);
+            printBoardPerspectiveWhite(game);
+        } catch (ClientEndException e) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+            System.out.print(EscapeSequences.SET_BG_COLOR_RED);
+            if (e.getMessage().equals("bad request")) {
+                System.out.print("Chosen Game Does Not Exist.\n");
+            } else {
+                System.out.print(e.getMessage());
+            }
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+        }
     }
 
     private void handleJoin() {
@@ -127,22 +140,47 @@ public class ClientInterface {
             }
         }
         double gameID = gameList.get(id - 1).getGameID();
-        ChessGame game = facade.sendJoinGameRequest(gameID, team);
-        if (Objects.equals(team, "WHITE")) {
-            printBoardPerspectiveWhite(game);
-        } else {
-            printBoardPerspectiveBlack(game);
+        ChessGame game;
+        try {
+            game = facade.sendJoinGameRequest(gameID, team);
+            if (Objects.equals(team, "WHITE")) {
+                printBoardPerspectiveWhite(game);
+            } else {
+                printBoardPerspectiveBlack(game);
+            }
+        } catch (ClientEndException e) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+            System.out.print(EscapeSequences.SET_BG_COLOR_RED);
+            if (e.getMessage().equals("bad request")) {
+                System.out.print("Chosen Game or Team Does Not Exist.\n");
+            } else {
+                System.out.print(e.getMessage());
+            }
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
         }
     }
 
     private void handleList() {
-        gameList = facade.sendListGameRequest();
-        int count = 1;
-        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
-        for (GameStruct i : gameList) {
-            System.out.printf("%d. %s: White: %s, Black: %s", count, i.getGameName(), i.getWhiteUsername(), i.getBlackUsername());
-            System.out.println();
-            count++;
+        try {
+            gameList = facade.sendListGameRequest();
+            int count = 1;
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+            for (GameStruct i : gameList) {
+                System.out.printf("%d. %s: White: %s, Black: %s", count, i.getGameName(), i.getWhiteUsername(), i.getBlackUsername());
+                System.out.println();
+                count++;
+            }
+        } catch (ClientEndException e) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+            System.out.print(EscapeSequences.SET_BG_COLOR_RED);
+            if (e.getMessage().equals("unauthorized")) {
+                System.out.print("Issue with session permissions, please logout and login back in.\n");
+            } else {
+                System.out.print(e.getMessage());
+            }
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
         }
     }
 
@@ -150,12 +188,39 @@ public class ClientInterface {
         System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
         System.out.print("What would you like to call this game?: ");
         String gameName = scanner.nextLine();
-        facade.sendCreateGameRequest(gameName);
+        try {
+            facade.sendCreateGameRequest(gameName);
+        } catch (ClientEndException e) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+            System.out.print(EscapeSequences.SET_BG_COLOR_RED);
+            if (e.getMessage().equals("unauthorized")) {
+                System.out.print("Issue with session permissions, please logout and login back in.\n");
+            } else if (e.getMessage().equals("bad request")) {
+                System.out.print("Invalid name please try again.\n");
+            } else {
+                System.out.print(e.getMessage());
+            }
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+        }
     }
 
     private void handleLogout() {
-        facade.sendLogoutRequest();
-        state = State.SIGNEDOUT;
+        try {
+            facade.sendLogoutRequest();
+            state = State.SIGNEDOUT;
+        } catch (ClientEndException e) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+            System.out.print(EscapeSequences.SET_BG_COLOR_RED);
+            if (e.getMessage().equals("unauthorized")) {
+                System.out.print("Issue with Connection, Logging user out.\n");
+                state = State.SIGNEDOUT;
+            } else {
+                System.out.print(e.getMessage());
+            }
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+        }
     }
 
     private void handleLogin() {
@@ -164,8 +229,22 @@ public class ClientInterface {
         String username = scanner.nextLine();
         System.out.print("Enter Password: ");
         String password = scanner.nextLine();
-        facade.sendLoginRequest(username, password);
-        state = State.SIGNEDIN;
+        try {
+            facade.sendLoginRequest(username, password);
+            state = State.SIGNEDIN;
+        } catch (ClientEndException e) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+            System.out.print(EscapeSequences.SET_BG_COLOR_RED);
+            if (e.getMessage().equals("bad request")) {
+                System.out.print("Invalid username, password, Please try again.\n");
+            } else if (e.getMessage().equals("unauthorized")) {
+                System.out.print("Incorrect password, Please try again.\n");
+            } else {
+                System.out.print(e.getMessage());
+            }
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+        }
     }
 
     private void handleRegister() {
@@ -176,8 +255,22 @@ public class ClientInterface {
         String password = scanner.nextLine();
         System.out.print("Enter Email: ");
         String email = scanner.nextLine();
-        facade.sendRegisterRequest(username, password, email);
-        state = State.SIGNEDIN;
+        try {
+            facade.sendRegisterRequest(username, password, email);
+            state = State.SIGNEDIN;
+        } catch (ClientEndException e) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+            System.out.print(EscapeSequences.SET_BG_COLOR_RED);
+            if (e.getMessage().equals("bad request")) {
+                System.out.print("Invalid username, password, or email. Please try again.\n");
+            } else if (e.getMessage().equals("name taken")) {
+                System.out.print("Username is already taken, Please try again.\n");
+            } else {
+                System.out.print(e.getMessage());
+            }
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+        }
     }
 
     private void handleHelp(String[] commands) {
@@ -224,7 +317,7 @@ public class ClientInterface {
         for (int i = 8; i > 0; i--) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
-            System.out.printf(" %d ", i);
+            System.out.printf("\u2003%d ", i);
             for (int j = 1; j < 9; j++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(i, j));
                 if (piece != null) {
@@ -235,7 +328,7 @@ public class ClientInterface {
             }
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
-            System.out.printf(" %d ", i);
+            System.out.printf(" %d\u2003", i);
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.println();
         }
@@ -364,6 +457,6 @@ public class ClientInterface {
         System.out.print(character);
     }
 
-    private final String[] WHITEPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, " a ", " b  ", " c ", " d  ", " e ", " f  ", " g ", " h  ", EscapeSequences.EMPTY};
-    private final String[] BLACKPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, " h ", " g  ", " f ", " e  ", " d ", " c  ", " b ", " a  ", EscapeSequences.EMPTY};
+    private final String[] WHITEPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, "\u2003a ", "\u2003b ", "\u2003c ", "\u2003d ", "\u2003e ", "\u2003f ", "\u2003g ", "\u2003h ", EscapeSequences.EMPTY};
+    private final String[] BLACKPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", EscapeSequences.EMPTY};
 }

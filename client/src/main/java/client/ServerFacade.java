@@ -14,20 +14,33 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ClientBackground {
-    private final HttpClient httpClient = HttpClient.newHttpClient();
-    private final String urlString = String.format(Locale.getDefault(), "http://%s:%d", "localhost", 8080);
+public class ServerFacade {
+
+    private final HttpClient httpClient;
+    private final String urlString;
     private String authToken;
 
-    private void test(String host, int port, String path) throws Exception {
+    public ServerFacade(int port) {
+        httpClient = HttpClient.newHttpClient();
+        urlString = String.format(Locale.getDefault(), "http://%s:%d", "localhost", port);
+    }
 
-
-        HttpResponse<String> httpResponse = sendRequest(urlString, "POST", "");
-
-        if (httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300) {
-            System.out.println(httpResponse.body());
-        } else {
-            System.out.println("Error: received status code " + httpResponse.statusCode());
+    private void checkStatusCode(HttpResponse<String> httpResponse) throws ClientEndException {
+        int statusCode = httpResponse.statusCode();
+        if (statusCode >= 200 && statusCode < 300) {
+            return;
+        } else if (statusCode >= 300 && statusCode < 400) {
+            return;
+        } else if (statusCode >= 400 && statusCode < 500) {
+            if (statusCode == 400) {
+                throw new ClientEndException("bad request");
+            } else if (statusCode == 401) {
+                throw new ClientEndException("unauthorized");
+            } else if (statusCode == 403) {
+                throw new ClientEndException("name taken");
+            }
+        } else if (statusCode >= 500 && statusCode < 600) {
+            throw new ClientEndException("Apologies there was an issue on our end, Please try again.");
         }
     }
 
@@ -61,7 +74,7 @@ public class ClientBackground {
         System.out.printf("= Response =========\n[%d]\n\n%s\n\n", statusCode, responseBody);
     }
 
-    public void sendRegisterRequest(String username, String password, String email) {
+    public void sendRegisterRequest(String username, String password, String email) throws ClientEndException {
         String url = urlString + "/user";
         String method = "POST";
         String body = new Gson().toJson(Map.of("username", username, "password", password, "email", email));
@@ -73,12 +86,12 @@ public class ClientBackground {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        receiveResponse(response);
+        checkStatusCode(response);
         var responseBody = new Gson().fromJson(response.body(), Map.class);
         setAuthToken(responseBody.get("authToken").toString());
     }
 
-    public void sendLoginRequest(String username, String password) {
+    public void sendLoginRequest(String username, String password) throws ClientEndException {
         String url = urlString + "/session";
         String method = "POST";
         String body = new Gson().toJson(Map.of("username", username, "password", password));
@@ -90,12 +103,12 @@ public class ClientBackground {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        receiveResponse(response);
+        checkStatusCode(response);
         var responseBody = new Gson().fromJson(response.body(), Map.class);
         setAuthToken(responseBody.get("authToken").toString());
     }
 
-    public void sendLogoutRequest() {
+    public void sendLogoutRequest() throws ClientEndException {
         String url = urlString + "/session";
         String method = "DELETE";
         String body = "";
@@ -107,11 +120,11 @@ public class ClientBackground {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        receiveResponse(response);
+        checkStatusCode(response);
         setAuthToken("");
     }
 
-    public void sendCreateGameRequest(String gameName) {
+    public void sendCreateGameRequest(String gameName) throws ClientEndException {
         String url = urlString + "/game";
         String method = "POST";
         String body = new Gson().toJson(Map.of("gameName", gameName));
@@ -123,10 +136,10 @@ public class ClientBackground {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        receiveResponse(response);
+        checkStatusCode(response);
     }
 
-    public List<GameStruct> sendListGameRequest() {
+    public List<GameStruct> sendListGameRequest() throws ClientEndException {
         String url = urlString + "/game";
         String method = "GET";
         String body = "";
@@ -138,14 +151,14 @@ public class ClientBackground {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        receiveResponse(response);
+        checkStatusCode(response);
         Type mapType = new TypeToken<Map<String, List<GameStruct>>>() {
         }.getType();
         Map<String, List<GameStruct>> responseBody = new Gson().fromJson(response.body(), mapType);
         return responseBody.get("games");
     }
 
-    public ChessGame sendJoinGameRequest(double gameID, String teamColor) {
+    public ChessGame sendJoinGameRequest(double gameID, String teamColor) throws ClientEndException {
         String url = urlString + "/game";
         String method = "PUT";
         String body = new Gson().toJson(Map.of("gameID", gameID, "playerColor", teamColor));
@@ -162,12 +175,12 @@ public class ClientBackground {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        receiveResponse(response);
-        receiveResponse(response2);
+        checkStatusCode(response);
+        checkStatusCode(response2);
         return new Gson().fromJson(response2.body(), ChessGame.class);
     }
 
-    public ChessGame sendObserveGameRequest(double gameID) {
+    public ChessGame sendObserveGameRequest(double gameID) throws ClientEndException {
         String url = urlString + "/board";
         String method = "GET";
         String body = new Gson().toJson(Map.of("gameID", gameID));
@@ -179,7 +192,7 @@ public class ClientBackground {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        receiveResponse(response);
+        checkStatusCode(response);
         return new Gson().fromJson(response.body(), ChessGame.class);
     }
 
