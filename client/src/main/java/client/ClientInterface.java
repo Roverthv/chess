@@ -84,6 +84,7 @@ public class ClientInterface {
                 System.out.printf("%s is not a number, please provide the number of the game you wish to join: ", invalidInput);
             }
             id = scanner.nextInt();
+            scanner.nextLine();
             if (id < 0 || id > gameList.size()) {
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
                 System.out.printf("%d is not a game in the list please try again", id);
@@ -95,10 +96,12 @@ public class ClientInterface {
         System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
         System.out.print("Enter the team color you would like play: ");
         String team = scanner.nextLine().toLowerCase();
-        while (!Objects.equals(team, "white") || !Objects.equals(team, "black")) {
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
-            System.out.printf("%s is not a valid team color, please enter 'white' or 'black': ", team);
-            team = scanner.nextLine().toLowerCase();
+        if (!Objects.equals(team, "white") && !Objects.equals(team, "black")) {
+            while (!Objects.equals(team, "white") && !Objects.equals(team, "black")) {
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+                System.out.printf("%s is not a valid team color, please enter 'white' or 'black': ", team);
+                team = scanner.nextLine().toLowerCase();
+            }
         }
         double gameID = gameList.get(id - 1).getGameID();
         ChessGame game = facade.sendJoinGameRequest(gameID, team);
@@ -193,9 +196,12 @@ public class ClientInterface {
         for (String i : WHITEPERSPECTIVEBOARDERROW) {
             System.out.print(i);
         }
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
         System.out.println();
         for (int i = 8; i > 0; i--) {
-            System.out.print(i);
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+            System.out.printf(" %d ", i);
             for (int j = 1; j < 9; j++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(i, j));
                 if (piece != null) {
@@ -206,12 +212,16 @@ public class ClientInterface {
             }
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
-            System.out.print(i);
+            System.out.printf(" %d ", i);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.println();
         }
         for (String i : WHITEPERSPECTIVEBOARDERROW) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
             System.out.print(i);
         }
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
         System.out.println();
     }
 
@@ -222,9 +232,12 @@ public class ClientInterface {
         for (String i : BLACKPERSPECTIVEBOARDERROW) {
             System.out.print(i);
         }
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
         System.out.println();
         for (int i = 1; i < 9; i++) {
-            System.out.print(i);
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+            System.out.printf(" %d ", i);
             for (int j = 8; j > 0; j--) {
                 ChessPiece piece = board.getPiece(new ChessPosition(i, j));
                 if (piece != null) {
@@ -235,20 +248,24 @@ public class ClientInterface {
             }
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
-            System.out.print(i);
+            System.out.printf(" %d ", i);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.println();
         }
         for (String i : BLACKPERSPECTIVEBOARDERROW) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
             System.out.print(i);
         }
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
         System.out.println();
     }
 
     private void printTileNull(int i, int j) {
         if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0)) {
-            printBlackTileBlackTeam("");
+            printBlackTileBlackTeam(EscapeSequences.EMPTY);
         } else {
-            printWhiteTileBlackTeam("");
+            printWhiteTileBlackTeam(EscapeSequences.EMPTY);
         }
     }
 
@@ -301,13 +318,13 @@ public class ClientInterface {
     }
 
     private void printBlackTileBlackTeam(String character) {
-        System.out.print(EscapeSequences.SET_BG_COLOR_WHITE);
+        System.out.print(EscapeSequences.SET_BG_COLOR_BLACK);
         System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
         System.out.print(character);
     }
 
     private void printBlackTileWhiteTeam(String character) {
-        System.out.print(EscapeSequences.SET_BG_COLOR_WHITE);
+        System.out.print(EscapeSequences.SET_BG_COLOR_BLACK);
         System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
         System.out.print(character);
     }
@@ -319,11 +336,11 @@ public class ClientInterface {
     }
 
     private void printWhiteTileWhiteTeam(String character) {
-        System.out.print(EscapeSequences.SET_BG_COLOR_BLACK);
+        System.out.print(EscapeSequences.SET_BG_COLOR_WHITE);
         System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
         System.out.print(character);
     }
 
-    private final String[] WHITEPERSPECTIVEBOARDERROW = {"", "a", "b", "c", "d", "e", "f", "g", "h", ""};
-    private final String[] BLACKPERSPECTIVEBOARDERROW = {"", "h", "g", "f", "e", "d", "c", "b", "a", ""};
+    private final String[] WHITEPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", EscapeSequences.EMPTY};
+    private final String[] BLACKPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", EscapeSequences.EMPTY};
 }
