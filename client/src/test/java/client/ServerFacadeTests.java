@@ -10,6 +10,8 @@ import service.AdminService;
 import service.BadRequestException;
 import service.UserService;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ServerFacadeTests {
 
     private static Server server;
@@ -73,10 +75,10 @@ public class ServerFacadeTests {
         }
     }
 
-    private void createGame() {
+    private double createGame() {
         try {
             createUser();
-            service.createGame("test user", "test game");
+            return service.createGame("test user", "test game");
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -84,37 +86,157 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void registerTest() {
-        facade.sendRegisterRequest("test user", "test password", "test email");
+    public void registerPassesTest() {
+        assertDoesNotThrow(() -> facade.sendRegisterRequest("test user", "test password", "test email"));
     }
 
     @Test
-    public void loginTest() {
+    public void registerTakenUsernameTest() {
         createUser();
-        facade.sendLoginRequest("test user", "test password");
+        assertThrows(ClientEndException.class, () -> facade.sendRegisterRequest("test user", "test password", "test email"));
     }
 
     @Test
-    public void logoutTest() {
+    public void registerMissingUsernameTest() {
+        createUser();
+        assertThrows(ClientEndException.class, () -> facade.sendRegisterRequest("", "test password", "test email"));
+    }
+
+    @Test
+    public void registerMissingPasswordTest() {
+        createUser();
+        assertThrows(ClientEndException.class, () -> facade.sendRegisterRequest("test user", "", "test email"));
+    }
+
+    @Test
+    public void registerMissingEmailTest() {
+        createUser();
+        assertThrows(ClientEndException.class, () -> facade.sendRegisterRequest("test user", "test password", ""));
+    }
+
+    @Test
+    public void loginPassesTest() {
+        createUser();
+        assertDoesNotThrow(() -> facade.sendLoginRequest("test user", "test password"));
+    }
+
+    @Test
+    public void loginIncorrectPasswordTest() {
+        createUser();
+        assertThrows(ClientEndException.class, () -> facade.sendLoginRequest("test user", "password"));
+    }
+
+    @Test
+    public void loginMissingPasswordTest() {
+        createUser();
+        assertThrows(ClientEndException.class, () -> facade.sendLoginRequest("test user", ""));
+    }
+
+    @Test
+    public void loginMissingUsernameTest() {
+        createUser();
+        assertThrows(ClientEndException.class, () -> facade.sendLoginRequest("", "test password"));
+    }
+
+    @Test
+    public void logoutPassesTest() {
         String testToken = createAuth();
         facade.setAuthToken(testToken);
-        facade.sendLogoutRequest();
+        assertDoesNotThrow(() -> facade.sendLogoutRequest());
     }
 
     @Test
-    public void createGameTest() {
+    public void logoutFailsTest() {
+        createAuth();
+        facade.setAuthToken("testToken");
+        assertThrows(ClientEndException.class, () -> facade.sendLogoutRequest());
+    }
+
+    @Test
+    public void createGamePassesTest() {
         createUser();
         String testToken = createAuth();
         facade.setAuthToken(testToken);
-        facade.sendCreateGameRequest("test name");
+        assertDoesNotThrow(() -> facade.sendCreateGameRequest("test name"));
     }
 
     @Test
-    public void listGamesTest() {
+    public void createGameInvalidAuthTokenTest() {
+        createUser();
+        createAuth();
+        facade.setAuthToken("testToken");
+        assertThrows(ClientEndException.class, () -> facade.sendCreateGameRequest("test name"));
+    }
+
+    @Test
+    public void createGameInvalidNameTest() {
+        createUser();
+        String testToken = createAuth();
+        facade.setAuthToken(testToken);
+        assertThrows(ClientEndException.class, () -> facade.sendCreateGameRequest(""));
+    }
+
+    @Test
+    public void listGamesPassesTest() {
         createGame();
         String testToken = createAuth();
         facade.setAuthToken(testToken);
-        facade.sendListGameRequest();
+        assertDoesNotThrow(() -> facade.sendListGameRequest());
+    }
+
+    @Test
+    public void listGamesNoGamesTest() {
+        String testToken = createAuth();
+        facade.setAuthToken(testToken);
+        assertDoesNotThrow(() -> facade.sendListGameRequest());
+    }
+
+    @Test
+    public void joinGamePassesWhiteTest() {
+        double gameID = createGame();
+        String testToken = createAuth();
+        facade.setAuthToken(testToken);
+        assertDoesNotThrow(() -> facade.sendJoinGameRequest(gameID, "WHITE"));
+    }
+
+    @Test
+    public void joinGamePassesBlackTest() {
+        double gameID = createGame();
+        String testToken = createAuth();
+        facade.setAuthToken(testToken);
+        assertDoesNotThrow(() -> facade.sendJoinGameRequest(gameID, "BLACK"));
+    }
+
+    @Test
+    public void joinGameInvalidIDTest() {
+        createGame();
+        String testToken = createAuth();
+        facade.setAuthToken(testToken);
+        assertThrows(ClientEndException.class, () -> facade.sendJoinGameRequest(1321323, "WHITE"));
+    }
+
+    @Test
+    public void joinGameInvalidColorTest() {
+        double gameID = createGame();
+        String testToken = createAuth();
+        facade.setAuthToken(testToken);
+        assertThrows(ClientEndException.class, () -> facade.sendJoinGameRequest(gameID, "uiewfh"));
+    }
+
+    @Test
+    public void observeGamePassesTest() {
+        double gameID = createGame();
+        String testToken = createAuth();
+        facade.setAuthToken(testToken);
+        assertDoesNotThrow(() -> facade.sendObserveGameRequest(gameID));
+    }
+
+    @Test
+    public void observeGameInvalidIDTest() {
+        createGame();
+        String testToken = createAuth();
+        facade.setAuthToken(testToken);
+        assertThrows(ClientEndException.class, () -> facade.sendObserveGameRequest(23958257));
     }
 
 }

@@ -40,8 +40,12 @@ public class UserService {
         return gameDatabase.getGame(id);
     }
 
-    public ChessGame getGameState(int id) throws DataAccessException {
-        return gameDatabase.getGame(id);
+    public ChessGame getGameState(int id) throws DataAccessException, BadRequestException {
+        ChessGame game = gameDatabase.getGame(id);
+        if (game == null) {
+            throw new BadRequestException("Error: bad request");
+        }
+        return game;
     }
 
     private int makeGameID() throws DataAccessException {

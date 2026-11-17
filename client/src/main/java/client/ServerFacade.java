@@ -27,11 +27,7 @@ public class ServerFacade {
 
     private void checkStatusCode(HttpResponse<String> httpResponse) throws ClientEndException {
         int statusCode = httpResponse.statusCode();
-        if (statusCode >= 200 && statusCode < 300) {
-            return;
-        } else if (statusCode >= 300 && statusCode < 400) {
-            return;
-        } else if (statusCode >= 400 && statusCode < 500) {
+        if (statusCode >= 400 && statusCode < 500) {
             if (statusCode == 400) {
                 throw new ClientEndException("bad request");
             } else if (statusCode == 401) {
@@ -59,7 +55,7 @@ public class ServerFacade {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    private HttpRequest.BodyPublisher requestBodyPublisher(String body) throws IOException {
+    private HttpRequest.BodyPublisher requestBodyPublisher(String body) {
         if (body != null) {
             return HttpRequest.BodyPublishers.ofString(body);
         } else {
@@ -67,23 +63,14 @@ public class ServerFacade {
         }
     }
 
-    private void receiveResponse(HttpResponse<String> response) {
-        var statusCode = response.statusCode();
-
-        var responseBody = new Gson().fromJson(response.body(), Map.class);
-        System.out.printf("= Response =========\n[%d]\n\n%s\n\n", statusCode, responseBody);
-    }
-
     public void sendRegisterRequest(String username, String password, String email) throws ClientEndException {
         String url = urlString + "/user";
         String method = "POST";
         String body = new Gson().toJson(Map.of("username", username, "password", password, "email", email));
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
         try {
             response = sendRequest(url, method, body);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
         checkStatusCode(response);
@@ -95,12 +82,10 @@ public class ServerFacade {
         String url = urlString + "/session";
         String method = "POST";
         String body = new Gson().toJson(Map.of("username", username, "password", password));
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
         try {
             response = sendRequest(url, method, body);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
         checkStatusCode(response);
@@ -112,12 +97,10 @@ public class ServerFacade {
         String url = urlString + "/session";
         String method = "DELETE";
         String body = "";
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
         try {
             response = sendRequest(url, authToken, method, body);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
         checkStatusCode(response);
@@ -128,12 +111,10 @@ public class ServerFacade {
         String url = urlString + "/game";
         String method = "POST";
         String body = new Gson().toJson(Map.of("gameName", gameName));
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
         try {
             response = sendRequest(url, authToken, method, body);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
         checkStatusCode(response);
@@ -143,12 +124,10 @@ public class ServerFacade {
         String url = urlString + "/game";
         String method = "GET";
         String body = "";
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
         try {
             response = sendRequest(url, authToken, method, body);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
         checkStatusCode(response);
@@ -165,14 +144,12 @@ public class ServerFacade {
         String url2 = urlString + "/board";
         String method2 = "GET";
         String body2 = new Gson().toJson(Map.of("gameID", gameID));
-        HttpResponse<String> response = null;
-        HttpResponse<String> response2 = null;
+        HttpResponse<String> response;
+        HttpResponse<String> response2;
         try {
             response = sendRequest(url, authToken, method, body);
             response2 = sendRequest(url2, authToken, method2, body2);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
         checkStatusCode(response);
@@ -184,12 +161,10 @@ public class ServerFacade {
         String url = urlString + "/board";
         String method = "GET";
         String body = new Gson().toJson(Map.of("gameID", gameID));
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
         try {
             response = sendRequest(url, authToken, method, body);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
         checkStatusCode(response);
