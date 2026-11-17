@@ -25,7 +25,8 @@ public record GameStruct(int gameID, String blackUsername, String whiteUsername,
             return false;
         }
         GameStruct that = (GameStruct) o;
-        return gameID == that.gameID && Objects.equals(gameName, that.gameName) && Objects.equals(blackUsername, that.blackUsername) && Objects.equals(whiteUsername, that.whiteUsername);
+        return gameID == that.gameID && Objects.equals(gameName, that.gameName) &&
+                Objects.equals(blackUsername, that.blackUsername) && Objects.equals(whiteUsername, that.whiteUsername);
     }
 
     @Override

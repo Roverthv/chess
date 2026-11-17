@@ -70,26 +70,8 @@ public class ClientInterface {
     }
 
     private void handleObserve() {
-        boolean valid = false;
-        int id = 1;
-        while (!valid) {
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
-            System.out.print("Enter Game Number: ");
-            while (!scanner.hasNextInt()) {
-                String invalidInput = scanner.nextLine();
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
-                System.out.printf("%s is not a number, please provide the number of the game you wish to join: ", invalidInput);
-            }
-            id = scanner.nextInt();
-            scanner.nextLine();
-            if (id < 0 || id > gameList.size()) {
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
-                System.out.printf("%d is not a game in the list please try again", id);
-                System.out.println();
-                break;
-            }
-            valid = true;
-        }
+        int id = retrieveGameNumber();
+
         double gameID = gameList.get(id - 1).getGameID();
         ChessGame game;
         try {
@@ -109,26 +91,8 @@ public class ClientInterface {
     }
 
     private void handleJoin() {
-        boolean valid = false;
-        int id = 1;
-        while (!valid) {
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
-            System.out.print("Enter Game Number: ");
-            while (!scanner.hasNextInt()) {
-                String invalidInput = scanner.nextLine();
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
-                System.out.printf("%s is not a number, please provide the number of the game you wish to join: ", invalidInput);
-            }
-            id = scanner.nextInt();
-            scanner.nextLine();
-            if (id < 0 || id > gameList.size()) {
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
-                System.out.printf("%d is not a game in the list please try again", id);
-                System.out.println();
-                break;
-            }
-            valid = true;
-        }
+        int id = retrieveGameNumber();
+
         System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
         System.out.print("Enter the team color you would like play: ");
         String team = scanner.nextLine().toUpperCase();
@@ -289,14 +253,14 @@ public class ClientInterface {
         System.out.println();
     }
 
-    private final String[] SIGNEDOUTCOMMANDS = {
+    private static final String[] SIGNEDOUTCOMMANDS = {
             "register", " - create a new account",
             "login", " - play on an existing account",
             "quit", " - close application",
             "help", " - view possible commands"
     };
 
-    private final String[] SIGNEDINCOMMANDS = {
+    private static final String[] SIGNEDINCOMMANDS = {
             "create", " - create a new game",
             "list", " - list existing games",
             "join", " - play in an existing game",
@@ -457,6 +421,35 @@ public class ClientInterface {
         System.out.print(character);
     }
 
-    private final String[] WHITEPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, "\u2003a ", "\u2003b ", "\u2003c ", "\u2003d ", "\u2003e ", "\u2003f ", "\u2003g ", "\u2003h ", EscapeSequences.EMPTY};
-    private final String[] BLACKPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", EscapeSequences.EMPTY};
+    private static final String[] WHITEPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, "\u2003a ", "\u2003b ",
+            "\u2003c ", "\u2003d ", "\u2003e ", "\u2003f ", "\u2003g ", "\u2003h ", EscapeSequences.EMPTY};
+    private static final String[] BLACKPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, "\u2003h ", "\u2003g ",
+            "\u2003f ", "\u2003e ", "\u2003d ", "\u2003c ", "\u2003b ", "\u2003a ", EscapeSequences.EMPTY};
+
+    private int retrieveGameNumber() {
+        if (gameList == null) {
+            handleList();
+        }
+        boolean valid = false;
+        int id = 1;
+        while (!valid) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+            System.out.print("Enter Game Number: ");
+            while (!scanner.hasNextInt()) {
+                String invalidInput = scanner.nextLine();
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+                System.out.printf("%s is not a number, please provide the number of the game you wish to join: ", invalidInput);
+            }
+            id = scanner.nextInt();
+            scanner.nextLine();
+            if (id < 0 || id > gameList.size()) {
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+                System.out.printf("%d is not a game in the list please try again", id);
+                System.out.println();
+                break;
+            }
+            valid = true;
+        }
+        return id;
+    }
 }
