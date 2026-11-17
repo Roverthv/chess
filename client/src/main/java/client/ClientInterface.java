@@ -102,7 +102,6 @@ public class ClientInterface {
         }
         double gameID = gameList.get(id - 1).getGameID();
         ChessGame game = facade.sendJoinGameRequest(gameID, team);
-        //print out board based on what we got back.
         if (Objects.equals(team, "white")) {
             printBoardPerspectiveWhite(game);
         } else {

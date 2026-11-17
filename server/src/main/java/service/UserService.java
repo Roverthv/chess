@@ -40,6 +40,10 @@ public class UserService {
         return gameDatabase.getGame(id);
     }
 
+    public ChessGame getGameState(int id) throws DataAccessException {
+        return gameDatabase.getGame(id);
+    }
+
     private int makeGameID() throws DataAccessException {
 
         int id;

@@ -149,17 +149,22 @@ public class ClientBackground {
         String url = urlString + "/game";
         String method = "PUT";
         String body = new Gson().toJson(Map.of("gameID", gameID, "playerColor", teamColor));
-        ;
+        String url2 = urlString + "/board";
+        String method2 = "GET";
+        String body2 = new Gson().toJson(Map.of("gameID", gameID));
         HttpResponse<String> response = null;
+        HttpResponse<String> response2 = null;
         try {
             response = sendRequest(url, authToken, method, body);
+            response2 = sendRequest(url2, authToken, method2, body2);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         receiveResponse(response);
-        return new Gson().fromJson(response.headers().map().get("gameState").getFirst(), ChessGame.class);
+        receiveResponse(response2);
+        return new Gson().fromJson(response.body(), ChessGame.class);
     }
 
     public void sendObserveGameRequest() {

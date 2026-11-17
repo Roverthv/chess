@@ -51,8 +51,36 @@ public class Server {
             javalin.post("/game", this::newGame);
             javalin.put("/game", this::joinGame);
             javalin.get("/game", this::getGames);
+            javalin.get("/board", this::getGameState);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void getGameState(@NotNull Context ctx) {
+        var json = new Gson();
+        Map<String, String> error;
+        var authToken = ctx.header("authorization");
+        Map<String, Object> body = ctx.bodyAsClass(Map.class);
+        try {
+            checksForBadRequest(body, 1);
+            Double gameID = (Double) body.get("gameID");
+            admin.authenticate(authToken);
+            ChessGame chessGame = service.getGameState(gameID.intValue());
+            ctx.status(200);
+            ctx.result(json.toJson(chessGame));
+        } catch (UnauthorizedException e) {
+            ctx.status(401);
+            error = Map.of("message", e.getMessage());
+            ctx.result(json.toJson(error));
+        } catch (RuntimeException | DataAccessException e) {
+            ctx.status(500);
+            error = Map.of("message", e.getMessage());
+            ctx.result(json.toJson(error));
+        } catch (BadRequestException e) {
+            alreadyTakenCheck(ctx, e.getMessage());
+            error = Map.of("message", e.getMessage());
+            ctx.result(json.toJson(error));
         }
     }
 
@@ -91,7 +119,6 @@ public class Server {
             String username = admin.authenticate(authToken);
             ChessGame chessGame = service.joinGame(username, gameID.intValue(), team);
             ctx.status(200);
-            ctx.header("gameState", json.toJson(chessGame));
             ctx.result();
         } catch (UnauthorizedException e) {
             ctx.status(401);
