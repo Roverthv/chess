@@ -283,12 +283,7 @@ public class ClientInterface {
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
             System.out.printf("\u2003%d ", i);
             for (int j = 1; j < 9; j++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(i, j));
-                if (piece != null) {
-                    printTile(i, j, piece.getTeamColor(), piece.getPieceType());
-                } else {
-                    printTileNull(i, j);
-                }
+                printInnerBoard(i, j, board);
             }
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
@@ -319,12 +314,7 @@ public class ClientInterface {
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
             System.out.printf(" %d ", i);
             for (int j = 8; j > 0; j--) {
-                ChessPiece piece = board.getPiece(new ChessPosition(i, j));
-                if (piece != null) {
-                    printTile(i, j, piece.getTeamColor(), piece.getPieceType());
-                } else {
-                    printTileNull(i, j);
-                }
+                printInnerBoard(i, j, board);
             }
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
@@ -339,6 +329,15 @@ public class ClientInterface {
         }
         System.out.print(EscapeSequences.RESET_BG_COLOR);
         System.out.println();
+    }
+
+    private void printInnerBoard(int i, int j, ChessBoard board) {
+        ChessPiece piece = board.getPiece(new ChessPosition(i, j));
+        if (piece != null) {
+            printTile(i, j, piece.getTeamColor(), piece.getPieceType());
+        } else {
+            printTileNull(i, j);
+        }
     }
 
     private void printTileNull(int i, int j) {
