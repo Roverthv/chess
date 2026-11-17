@@ -4,15 +4,11 @@ import dataaccess.*;
 import dataaccess.sql.SQLAuthDataAccess;
 import dataaccess.sql.SQLGameDataAccess;
 import dataaccess.sql.SQLUserDataAccess;
-import datastructures.AuthData;
-import datastructures.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import service.AdminService;
 import service.BadRequestException;
 import service.UserService;
-
-import java.util.ArrayList;
 
 public class ServerFacadeTests {
 
@@ -22,6 +18,7 @@ public class ServerFacadeTests {
     private static AuthDataAccess authDatabase;
     private static GameDataAccess gameDatabase;
     private static AdminService admin;
+    private static UserService service;
 
     @BeforeAll
     public static void init() {
@@ -37,6 +34,7 @@ public class ServerFacadeTests {
             authDatabase = new SQLAuthDataAccess();
             gameDatabase = new SQLGameDataAccess();
             admin = new AdminService(userDatabase, authDatabase, gameDatabase);
+            service = new UserService(userDatabase, authDatabase, gameDatabase);
         } catch (DataAccessException e) {
             throw new RuntimeException("Creating new SQLGameDataAccess structure failed");
         }
@@ -74,8 +72,12 @@ public class ServerFacadeTests {
         }
     }
 
-    private void createGame() throws DataAccessException {
-        gameDatabase.newGame(1, "testGame");
+    private void createGame() {
+        try {
+            service.createGame("test user", "test game");
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -95,6 +97,14 @@ public class ServerFacadeTests {
         String testToken = createAuth();
         facade.setAuthToken(testToken);
         facade.sendLogoutRequest();
+    }
+
+    @Test
+    public void createGameTest() {
+        createUser();
+        String testToken = createAuth();
+        facade.setAuthToken(testToken);
+        facade.sendCreateGameRequest("test name");
     }
 
 }

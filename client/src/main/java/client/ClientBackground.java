@@ -108,7 +108,18 @@ public class ClientBackground {
     }
 
     public void sendCreateGameRequest(String gameName) {
-
+        String url = urlString + "/game";
+        String method = "POST";
+        String body = new Gson().toJson(Map.of("gameName", gameName));
+        HttpResponse<String> response = null;
+        try {
+            response = sendRequest(url, authToken, method, body);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        receiveResponse(response);
     }
 
     public void sendListGameRequest() {
