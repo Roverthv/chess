@@ -117,7 +117,8 @@ public class Server {
             Double gameID = (Double) body.get("gameID");
             String team = body.get("playerColor").toString();
             String username = admin.authenticate(authToken);
-            ChessGame chessGame = service.joinGame(username, gameID.intValue(), team);
+            /*ChessGame chessGame = */
+            service.joinGame(username, gameID.intValue(), team);
             ctx.status(200);
             ctx.result();
         } catch (UnauthorizedException e) {

@@ -70,6 +70,29 @@ public class ClientInterface {
     }
 
     private void handleObserve() {
+        boolean valid = false;
+        int id = 1;
+        while (!valid) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+            System.out.print("Enter Game Number: ");
+            while (!scanner.hasNextInt()) {
+                String invalidInput = scanner.nextLine();
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+                System.out.printf("%s is not a number, please provide the number of the game you wish to join: ", invalidInput);
+            }
+            id = scanner.nextInt();
+            scanner.nextLine();
+            if (id < 0 || id > gameList.size()) {
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+                System.out.printf("%d is not a game in the list please try again", id);
+                System.out.println();
+                break;
+            }
+            valid = true;
+        }
+        double gameID = gameList.get(id - 1).getGameID();
+        ChessGame game = facade.sendObserveGameRequest(gameID);
+        printBoardPerspectiveWhite(game);
     }
 
     private void handleJoin() {
@@ -95,17 +118,17 @@ public class ClientInterface {
         }
         System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
         System.out.print("Enter the team color you would like play: ");
-        String team = scanner.nextLine().toLowerCase();
-        if (!Objects.equals(team, "white") && !Objects.equals(team, "black")) {
-            while (!Objects.equals(team, "white") && !Objects.equals(team, "black")) {
+        String team = scanner.nextLine().toUpperCase();
+        if (!Objects.equals(team, "WHITE") && !Objects.equals(team, "BLACK")) {
+            while (!Objects.equals(team, "WHITE") && !Objects.equals(team, "BLACK")) {
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
-                System.out.printf("%s is not a valid team color, please enter 'white' or 'black': ", team);
+                System.out.printf("%s is not a valid team color, please enter 'WHITE' or 'BLACK': ", team);
                 team = scanner.nextLine().toLowerCase();
             }
         }
         double gameID = gameList.get(id - 1).getGameID();
         ChessGame game = facade.sendJoinGameRequest(gameID, team);
-        if (Objects.equals(team, "white")) {
+        if (Objects.equals(team, "WHITE")) {
             printBoardPerspectiveWhite(game);
         } else {
             printBoardPerspectiveBlack(game);
@@ -341,6 +364,6 @@ public class ClientInterface {
         System.out.print(character);
     }
 
-    private final String[] WHITEPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", EscapeSequences.EMPTY};
-    private final String[] BLACKPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", EscapeSequences.EMPTY};
+    private final String[] WHITEPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, " a ", " b  ", " c ", " d  ", " e ", " f  ", " g ", " h  ", EscapeSequences.EMPTY};
+    private final String[] BLACKPERSPECTIVEBOARDERROW = {EscapeSequences.EMPTY, " h ", " g  ", " f ", " e  ", " d ", " c  ", " b ", " a  ", EscapeSequences.EMPTY};
 }
