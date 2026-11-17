@@ -71,7 +71,7 @@ public class ClientBackground {
         }
         receiveResponse(response);
         var responseBody = new Gson().fromJson(response.body(), Map.class);
-        authToken = responseBody.get("authToken").toString();
+        setAuthToken(responseBody.get("authToken").toString());
     }
 
     public void sendLoginRequest(String username, String password) {
@@ -88,13 +88,27 @@ public class ClientBackground {
         }
         receiveResponse(response);
         var responseBody = new Gson().fromJson(response.body(), Map.class);
-        authToken = responseBody.get("authToken").toString();
+        setAuthToken(responseBody.get("authToken").toString());
     }
 
     public void sendLogoutRequest() {
+        String url = urlString + "/session";
+        String method = "DELETE";
+        String body = "";
+        HttpResponse<String> response = null;
+        try {
+            response = sendRequest(url, authToken, method, body);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        receiveResponse(response);
+        setAuthToken("");
     }
 
-    public void sendCreateGameRequest() {
+    public void sendCreateGameRequest(String gameName) {
+
     }
 
     public void sendListGameRequest() {
@@ -104,6 +118,10 @@ public class ClientBackground {
     }
 
     public void sendObserveGameRequest() {
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 }
 

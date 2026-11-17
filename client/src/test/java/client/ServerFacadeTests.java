@@ -66,9 +66,12 @@ public class ServerFacadeTests {
         }
     }
 
-    private void createAuth() throws DataAccessException {
-        var authdata = new AuthData("test user", "testToken");
-        authDatabase.addAuthData(authdata);
+    private String createAuth() {
+        try {
+            return admin.createAuth("test user");
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void createGame() throws DataAccessException {
@@ -85,6 +88,13 @@ public class ServerFacadeTests {
     public void loginTest() {
         createUser();
         facade.sendLoginRequest("test user", "test password");
+    }
+
+    @Test
+    public void logoutTest() {
+        String testToken = createAuth();
+        facade.setAuthToken(testToken);
+        facade.sendLogoutRequest();
     }
 
 }

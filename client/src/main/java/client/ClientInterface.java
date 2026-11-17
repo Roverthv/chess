@@ -72,32 +72,35 @@ public class ClientInterface {
     }
 
     private void handleCreate() {
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+        System.out.print("What would you like to call this game?: ");
+        String gameName = scanner.nextLine();
+        facade.sendCreateGameRequest(gameName);
     }
 
     private void handleLogout() {
+        facade.sendLogoutRequest();
+        state = State.SIGNEDOUT;
     }
 
     private void handleLogin() {
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
         System.out.print("Enter Username: ");
         String username = scanner.nextLine();
-        System.out.println();
         System.out.print("Enter Password: ");
         String password = scanner.nextLine();
-        System.out.println();
         facade.sendLoginRequest(username, password);
         state = State.SIGNEDIN;
     }
 
     private void handleRegister() {
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
         System.out.print("Enter Desired Username: ");
         String username = scanner.nextLine();
-        System.out.println();
         System.out.print("Enter Desired Password: ");
         String password = scanner.nextLine();
-        System.out.println();
         System.out.print("Enter Email: ");
         String email = scanner.nextLine();
-        System.out.println();
         facade.sendRegisterRequest(username, password, email);
         state = State.SIGNEDIN;
     }
@@ -106,7 +109,7 @@ public class ClientInterface {
         for (int i = 0; i < commands.length; i = i + 2) {
             System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
             System.out.print(commands[i]);
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY);
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
             System.out.print(commands[i + 1]);
             System.out.println();
         }
