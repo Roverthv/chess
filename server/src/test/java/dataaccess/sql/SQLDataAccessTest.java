@@ -22,7 +22,6 @@ class SQLDataAccessTest {
         } catch (DataAccessException e) {
             throw new RuntimeException("Creating new SQLGameDataAccess structure failed");
         }
-
     }
 
     @Test

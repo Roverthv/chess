@@ -2,16 +2,16 @@ package client;
 
 import ui.EscapeSequences;
 
-import java.util.List;
 import java.util.Scanner;
 
-public class Client {
+public class ClientInterface {
     enum State {
         QUIT, SIGNEDOUT, SIGNEDIN
     }
 
     State state = State.SIGNEDOUT;
     Scanner scanner = new Scanner(System.in);
+    ClientBackground facade = new ClientBackground();
 
     public void run() {
         System.out.println("Welcome to Chess. Type Help to get started.");
@@ -81,6 +81,16 @@ public class Client {
     }
 
     private void handleRegister() {
+        System.out.print("Enter Desired Username: ");
+        String user = scanner.nextLine();
+        System.out.println();
+        System.out.print("Enter Desired Password: ");
+        String password = scanner.nextLine();
+        System.out.println();
+        System.out.print("Enter Email: ");
+        String email = scanner.nextLine();
+        System.out.println();
+        //call facade object register function with parameters username string and email
     }
 
     private void handleHelp(String[] commands) {
