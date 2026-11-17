@@ -4,8 +4,15 @@ import dataaccess.*;
 import dataaccess.sql.SQLAuthDataAccess;
 import dataaccess.sql.SQLGameDataAccess;
 import dataaccess.sql.SQLUserDataAccess;
+import datastructures.AuthData;
+import datastructures.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
+import service.AdminService;
+import service.BadRequestException;
+import service.UserService;
+
+import java.util.ArrayList;
 
 public class ServerFacadeTests {
 
@@ -14,6 +21,7 @@ public class ServerFacadeTests {
     private static UserDataAccess userDatabase;
     private static AuthDataAccess authDatabase;
     private static GameDataAccess gameDatabase;
+    private static AdminService admin;
 
     @BeforeAll
     public static void init() {
@@ -28,6 +36,7 @@ public class ServerFacadeTests {
             userDatabase = new SQLUserDataAccess();
             authDatabase = new SQLAuthDataAccess();
             gameDatabase = new SQLGameDataAccess();
+            admin = new AdminService(userDatabase, authDatabase, gameDatabase);
         } catch (DataAccessException e) {
             throw new RuntimeException("Creating new SQLGameDataAccess structure failed");
         }
@@ -49,10 +58,33 @@ public class ServerFacadeTests {
         server.stop();
     }
 
+    private void createUser() {
+        try {
+            admin.createUser("test user", "test password", "test email");
+        } catch (BadRequestException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void createAuth() throws DataAccessException {
+        var authdata = new AuthData("test user", "testToken");
+        authDatabase.addAuthData(authdata);
+    }
+
+    private void createGame() throws DataAccessException {
+        gameDatabase.newGame(1, "testGame");
+    }
+
 
     @Test
     public void registerTest() {
-        facade.sendRegisterRequest("testuser", "testpass", "testemail");
+        facade.sendRegisterRequest("test user", "test password", "test email");
+    }
+
+    @Test
+    public void loginTest() {
+        createUser();
+        facade.sendLoginRequest("test user", "test password");
     }
 
 }

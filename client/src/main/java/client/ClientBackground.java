@@ -70,9 +70,25 @@ public class ClientBackground {
             throw new RuntimeException(e);
         }
         receiveResponse(response);
+        var responseBody = new Gson().fromJson(response.body(), Map.class);
+        authToken = responseBody.get("authToken").toString();
     }
 
-    public void sendLoginRequest() {
+    public void sendLoginRequest(String username, String password) {
+        String url = urlString + "/session";
+        String method = "POST";
+        String body = new Gson().toJson(Map.of("username", username, "password", password));
+        HttpResponse<String> response = null;
+        try {
+            response = sendRequest(url, method, body);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        receiveResponse(response);
+        var responseBody = new Gson().fromJson(response.body(), Map.class);
+        authToken = responseBody.get("authToken").toString();
     }
 
     public void sendLogoutRequest() {

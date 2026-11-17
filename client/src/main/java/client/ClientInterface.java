@@ -78,11 +78,19 @@ public class ClientInterface {
     }
 
     private void handleLogin() {
+        System.out.print("Enter Username: ");
+        String username = scanner.nextLine();
+        System.out.println();
+        System.out.print("Enter Password: ");
+        String password = scanner.nextLine();
+        System.out.println();
+        facade.sendLoginRequest(username, password);
+        state = State.SIGNEDIN;
     }
 
     private void handleRegister() {
         System.out.print("Enter Desired Username: ");
-        String user = scanner.nextLine();
+        String username = scanner.nextLine();
         System.out.println();
         System.out.print("Enter Desired Password: ");
         String password = scanner.nextLine();
@@ -90,7 +98,8 @@ public class ClientInterface {
         System.out.print("Enter Email: ");
         String email = scanner.nextLine();
         System.out.println();
-        //call facade object register function with parameters username string and email
+        facade.sendRegisterRequest(username, password, email);
+        state = State.SIGNEDIN;
     }
 
     private void handleHelp(String[] commands) {
