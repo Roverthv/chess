@@ -84,6 +84,7 @@ public class ClientInterface {
                 System.out.print("Chosen Game Does Not Exist.\n");
             } else {
                 System.out.print(e.getMessage());
+                System.out.println();
             }
             System.out.print(EscapeSequences.RESET_TEXT_COLOR);
             System.out.print(EscapeSequences.RESET_BG_COLOR);
@@ -100,7 +101,7 @@ public class ClientInterface {
             while (!Objects.equals(team, "WHITE") && !Objects.equals(team, "BLACK")) {
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
                 System.out.printf("%s is not a valid team color, please enter 'WHITE' or 'BLACK': ", team);
-                team = scanner.nextLine().toLowerCase();
+                team = scanner.nextLine().toUpperCase();
             }
         }
         double gameID = gameList.get(id - 1).getGameID();
@@ -119,6 +120,7 @@ public class ClientInterface {
                 System.out.print("Chosen Game or Team Does Not Exist.\n");
             } else {
                 System.out.print(e.getMessage());
+                System.out.println();
             }
             System.out.print(EscapeSequences.RESET_TEXT_COLOR);
             System.out.print(EscapeSequences.RESET_BG_COLOR);
@@ -312,13 +314,13 @@ public class ClientInterface {
         for (int i = 1; i < 9; i++) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
-            System.out.printf(" %d ", i);
+            System.out.printf("\u2003%d ", i);
             for (int j = 8; j > 0; j--) {
                 printInnerBoard(i, j, board);
             }
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
-            System.out.printf(" %d ", i);
+            System.out.printf(" %d\u2003", i);
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.println();
         }
@@ -445,7 +447,7 @@ public class ClientInterface {
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
                 System.out.printf("%d is not a game in the list please try again", id);
                 System.out.println();
-                break;
+                continue;
             }
             valid = true;
         }
